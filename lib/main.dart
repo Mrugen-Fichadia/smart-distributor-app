@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+
 import 'package:smart_distributor_app/pages/home.dart';
 
 void main() {
@@ -37,8 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              const MyHomePage(title: 'Home Page'),
+          builder: (context) => const MyHomePage(title: 'Home Page'),
         ),
       );
     });
@@ -70,5 +70,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
-
