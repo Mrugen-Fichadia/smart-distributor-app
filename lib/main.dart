@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'firebase_options.dart'; // Import generated Firebase options
 import 'package:smart_distributor_app/pages/home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter bindings are initialized
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions
+        .currentPlatform, // Initialize Firebase with platform-specific options
+  );
   runApp(const MyApp());
 }
 
@@ -37,8 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              const MyHomePage(title: 'Home Page'),
+          builder: (context) => const MyHomePage(title: 'Home Page'),
         ),
       );
     });
@@ -70,5 +76,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
-
