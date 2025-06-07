@@ -12,7 +12,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // -------------- Email validation --------------
@@ -52,7 +51,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(
@@ -65,90 +64,126 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-          //---------- show full image ------------//
-              clipBehavior: Clip.none,
-              children: [
-             
-          // -------------- Frist black container ---------
-                Container(
-                  height: 220,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
-                  ),
-                ),
-            // ------------ image position ----------
-                Positioned(
-                  top: 0, 
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Image.asset(
-                      'assets/images/reset_password.png',
-                      width: 360,
-                      height: 350,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-
-                   Positioned(
-                  top: 20,
-                  left: 20,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    onPressed: () => Get.back(),
-                  ),
-                ),
-              ],
-            ),
+            const ForgotHeader(),
 
             const SizedBox(height: 120),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(top:8 , bottom : 24 , left: 24 , right: 24),
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // const SizedBox(height: 20),
-                    const Text(
-                      'Reset Your Password!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Enter Your Mail Id to Reset your Password',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    ForgotActions(
-                      emailController: _emailController,
-                      validateEmail: _validateEmail,
-                      onSubmit: _submitForm,
-                    ),
-                  ],
-                ),
-              ),
+
+            ResetForm(
+              formKey: _formKey,
+              emailController: _emailController,
+              validateEmail: _validateEmail,
+              onSubmit: _submitForm,
             ),
           ],
         ),
       ),
     );
   }
+}
 
+class ForgotHeader extends StatelessWidget {
+  const ForgotHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      //---------- show full image ------------//
+      clipBehavior: Clip.none,
+      children: [
+    // -------------- First black container ---------
+        Container(
+          height: 220,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(24),
+              bottomRight: Radius.circular(24),
+            ),
+          ),
+        ),
+
+  // ------------ image position ----------
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Image.asset(
+              'assets/images/reset_password.png',
+              width: 360,
+              height: 350,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+
+// ------------ back Icon------------
+        Positioned(
+          top: 20,
+          left: 20,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ResetForm extends StatelessWidget {
+  final GlobalKey<FormState> formKey;
+  final TextEditingController emailController;
+  final String? Function(String?) validateEmail;
+  final VoidCallback onSubmit;
+
+  const ResetForm({
+    super.key,
+    required this.formKey,
+    required this.emailController,
+    required this.validateEmail,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 8, bottom: 24, left: 24, right: 24),
+      decoration: const BoxDecoration(color: Colors.white),
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // const SizedBox(height: 20),
+            const Text(
+              'Reset Your Password!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Enter Your Mail Id to Reset your Password',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+
+            ForgotActions(
+              emailController: emailController,
+              validateEmail: validateEmail,
+              onSubmit: onSubmit,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class ForgotActions extends StatelessWidget {
@@ -170,6 +205,7 @@ class ForgotActions extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 18),
+         
           // ---------Input Field with validation
           TextFormField(
             controller: emailController,
@@ -179,7 +215,7 @@ class ForgotActions extends StatelessWidget {
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: const BorderSide(color: Colors.grey),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -195,7 +231,8 @@ class ForgotActions extends StatelessWidget {
             autovalidateMode: AutovalidateMode.disabled,
           ),
           const SizedBox(height: 18),
-          // Send Reset Link button
+          
+          // ------- Send Reset Link button --------
           PrimaryButton(
             text: 'Reset Password',
             onPressed: onSubmit,
