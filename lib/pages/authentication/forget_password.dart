@@ -26,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return null;
   }
 
-  // ------------------sncakbar and submit action---------
+  // ------------------Snackbar and submit action---------
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       Get.showSnackbar(
@@ -36,7 +36,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           duration: const Duration(seconds: 2),
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
-          // colorText: Colors.white,
           borderRadius: 8,
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -48,79 +47,108 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
 
       Future.delayed(const Duration(seconds: 2), () {
-        // Get.offAllNamed('/login'); // required navigation sdcreen
+        // Get.offAllNamed('/login'); // required navigation screen
       });
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-
-          onPressed: () => Get.back(),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.black,
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+      //     onPressed: () => Get.back(),
+      //   ),
+      // ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          children: [
+            Stack(
+          //---------- show full image ------------//
+              clipBehavior: Clip.none,
               children: [
-                const ForgotHeader(),
-                ForgotActions(
-                  emailController: _emailController,
-                  validateEmail: _validateEmail,
-                  onSubmit: _submitForm,
+             
+          // -------------- Frist black container ---------
+                Container(
+                  height: 220,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                  ),
+                ),
+            // ------------ image position ----------
+                Positioned(
+                  top: 0, 
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/reset_password.png',
+                      width: 360,
+                      height: 350,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                   Positioned(
+                  top: 20,
+                  left: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    onPressed: () => Get.back(),
+                  ),
                 ),
               ],
             ),
-          ),
+
+            const SizedBox(height: 120),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(top:8 , bottom : 24 , left: 24 , right: 24),
+              decoration: const BoxDecoration(color: Colors.white),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // const SizedBox(height: 20),
+                    const Text(
+                      'Reset Your Password!',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Enter Your Mail Id to Reset your Password',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    ForgotActions(
+                      emailController: _emailController,
+                      validateEmail: _validateEmail,
+                      onSubmit: _submitForm,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
-class ForgotHeader extends StatelessWidget {
-  const ForgotHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 18),
-
-        // ---------- image -------
-        Image.asset(
-          'assets/images/lock_icon.png',
-          width: 100,
-          height: 100,
-          fit: BoxFit.contain,
-        ),
-
-        const SizedBox(height: 18),
-
-        const Text(
-          'Reset Password',
-          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 14),
-        const Text(
-          'Enter your email to receive a Password Reset Link',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 14),
-      ],
-    );
-  }
 }
 
 class ForgotActions extends StatelessWidget {
@@ -137,44 +165,47 @@ class ForgotActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 44),
-        // ---------Input Field with validation
-        TextFormField(
-          controller: emailController,
-          decoration: InputDecoration(
-            labelText: 'Email',
-            floatingLabelStyle: TextStyle(color: AppColors.kBlue),
-            prefixIcon: const Icon(Icons.email_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey),
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          const SizedBox(height: 18),
+          // ---------Input Field with validation
+          TextFormField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              floatingLabelStyle: TextStyle(color: AppColors.kBlue),
+              prefixIcon: const Icon(Icons.email_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.kBlue),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.kBlue),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 16,
-            ),
+            keyboardType: TextInputType.emailAddress,
+            validator: validateEmail,
+            autovalidateMode: AutovalidateMode.disabled,
           ),
-          keyboardType: TextInputType.emailAddress,
-          validator: validateEmail,
-          autovalidateMode: AutovalidateMode.disabled,
-        ),
-        const SizedBox(height: 52),
-        // Send Reset Link button
-        PrimaryButton(
-          text: 'Send Reset Link',
-          onPressed: onSubmit,
-          backgroundColor: AppColors.kBlue,
-          textColor: Colors.white,
-          borderRadius: 12.0,
-          height: 46.0,
-        ),
-      ],
+          const SizedBox(height: 18),
+          // Send Reset Link button
+          PrimaryButton(
+            text: 'Reset Password',
+            onPressed: onSubmit,
+            backgroundColor: AppColors.kBlue,
+            textColor: Colors.white,
+            borderRadius: 12.0,
+            height: 46.0,
+          ),
+        ],
+      ),
     );
   }
 }
