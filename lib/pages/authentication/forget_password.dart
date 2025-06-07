@@ -96,28 +96,28 @@ class ForgotHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 24),
+        const SizedBox(height: 18),
 
-        // ---------- asset icon / or image -----
+        // ---------- image -------
         Image.asset(
-          'assets/images/forgot_password.png',
-          width: 150,
-          height: 150,
+          'assets/images/lock_icon.png',
+          width: 100,
+          height: 100,
           fit: BoxFit.contain,
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 18),
 
         const Text(
           'Reset Password',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 14),
         const Text(
           'Enter your email to receive a Password Reset Link',
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        const SizedBox(height: 42),
+        const SizedBox(height: 14),
       ],
     );
   }
