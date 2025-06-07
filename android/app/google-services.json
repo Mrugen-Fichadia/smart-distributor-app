@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654105791492",
+    "project_id": "smart-distribution-app",
+    "storage_bucket": "smart-distribution-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654105791492:android:815dcfb5d0b463773bf951",
+        "android_client_info": {
+          "package_name": "com.example.smart_distributor_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP_SGZ-8uxOg-oktRAIEj0Jp2p9d8IvNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
