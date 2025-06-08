@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Enum for the two main views
 enum AuthMode { signIn, signUp }
@@ -14,12 +16,10 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  // State variables
   AuthMode _authMode = AuthMode.signIn;
   final _signInFormKey = GlobalKey<FormState>();
   final _signUpFormKey = GlobalKey<FormState>();
 
-  // Controllers for text fields
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
@@ -32,7 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void dispose() {
-    // Dispose controllers to free up resources
     _emailController.dispose();
     _passwordController.dispose();
     _fullNameController.dispose();
@@ -48,7 +47,56 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
-  // --- WIDGETS ---
+  Future<void> _handleAuthAction() async {
+    if (_authMode == AuthMode.signIn) {
+      if (_signInFormKey.currentState!.validate()) {
+        try {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Sign in successful')));
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Sign in failed: $e')));
+        }
+      }
+    } else {
+      if (_signUpFormKey.currentState!.validate()) {
+        try {
+          UserCredential userCred = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
+              );
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCred.user!.uid)
+              .set({
+                'fullName': _fullNameController.text.trim(),
+                'email': _emailController.text.trim(),
+                'company': _selectedCompany,
+                'agencyName': _agencyNameController.text.trim(),
+                'distributorNumber': _distributorNumberController.text.trim(),
+                'role': _selectedRole.name,
+                'createdAt': Timestamp.now(),
+              });
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Sign up successful')));
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Sign up failed: $e')));
+        }
+      }
+    }
+  }
 
   Widget _buildSignInForm() {
     return Form(
@@ -84,7 +132,9 @@ class _AuthScreenState extends State<AuthScreen> {
               child: const Text(
                 'Forgot Password?',
                 style: TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -129,7 +179,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 !value!.contains('@') ? 'Please enter a valid email.' : null,
           ),
           const SizedBox(height: 16),
-          // OTP Field with Send Button
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -147,9 +196,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: TextButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('OTP Sent!')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('OTP Sent!')));
                   },
                   child: const Text('Send OTP'),
                 ),
@@ -169,8 +218,10 @@ class _AuthScreenState extends State<AuthScreen> {
             value: _selectedCompany,
             decoration: const InputDecoration(labelText: 'Select Company'),
             items: ['Company 1', 'Company 2', 'Company 3', 'Company 4']
-                .map((company) =>
-                    DropdownMenuItem(value: company, child: Text(company)))
+                .map(
+                  (company) =>
+                      DropdownMenuItem(value: company, child: Text(company)),
+                )
                 .toList(),
             onChanged: (value) => setState(() => _selectedCompany = value),
             validator: (value) =>
@@ -221,9 +272,9 @@ class _AuthScreenState extends State<AuthScreen> {
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
         trailing: Icon(Icons.add, color: Colors.blue[600]),
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Tapped on $title')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
         },
       ),
     );
@@ -233,13 +284,9 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // The main layout is now a Column.
         child: Column(
           children: [
-            // The Expanded widget makes the scrolling area take up all available space.
             Expanded(
-              // Using a ListView is more robust for complex scrolling forms
-              // and helps prevent overflow errors when the keyboard appears.
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
@@ -253,44 +300,36 @@ class _AuthScreenState extends State<AuthScreen> {
                   const Text(
                     'Welcome to our LPG distribution service!',
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
                   _CustomToggle(
                     selectedIndex: _authMode.index,
                     labels: const ['Sign In', 'Sign Up'],
-                    onTap: (index) {
-                      _switchAuthMode(AuthMode.values[index]);
-                    },
+                    onTap: (index) => _switchAuthMode(AuthMode.values[index]),
                   ),
                   const SizedBox(height: 30),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    transitionBuilder:
-                        (Widget child, Animation<double> animation) {
-                      return FadeTransition(opacity: animation, child: child);
-                    },
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
                     child: _authMode == AuthMode.signIn
                         ? _buildSignInForm()
                         : _buildSignUpForm(),
                   ),
-                  // Add some padding at the very bottom of the scroll view
                   const SizedBox(height: 20),
                 ],
               ),
             ),
-            // This button is now outside the scroll view and at the bottom
-            // of the main Column, making it "sticky".
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
               child: _AuthButton(
                 label: _authMode == AuthMode.signIn ? 'Sign In' : 'Sign Up',
-                onPressed: () {
-                  // TODO: Handle sign in or sign up logic
-                }
+                onPressed: _handleAuthAction,
               ),
             ),
           ],
@@ -300,7 +339,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 }
 
-// Custom widget for the toggle buttons (Sign In/Up and Roles)
 class _CustomToggle extends StatelessWidget {
   final int selectedIndex;
   final List<String> labels;
@@ -337,7 +375,7 @@ class _CustomToggle extends StatelessWidget {
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 5,
                             spreadRadius: 1,
-                          )
+                          ),
                         ]
                       : [],
                 ),
@@ -345,8 +383,9 @@ class _CustomToggle extends StatelessWidget {
                   child: Text(
                     labels[index],
                     style: TextStyle(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: isSelected ? Colors.black : Colors.black54,
                     ),
                   ),
@@ -360,7 +399,6 @@ class _CustomToggle extends StatelessWidget {
   }
 }
 
-// Custom widget for the main authentication button
 class _AuthButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
@@ -380,10 +418,7 @@ class _AuthButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         child: Text(label),
       ),

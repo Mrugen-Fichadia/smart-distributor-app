@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/pages/auth.dart'; // Assuming your AuthScreen file is here
+import 'package:smart_distributor_app/pages/auth.dart';
 import 'dart:async';
-import 'package:smart_distributor_app/pages/home.dart'; // This import is kept as it might be used elsewhere
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
+
   runApp(const MyApp());
 }
 
@@ -27,25 +30,20 @@ class MyApp extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide(
-              color: Colors.grey[300]!,
-            ),
+            borderSide: BorderSide(color: Colors.grey[300]!),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide(
-              color: Colors.grey[300]!,
-            ),
+            borderSide: BorderSide(color: Colors.grey[300]!),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(
-              color: Colors.blue,
-              width: 2.0,
-            ),
+            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16.0,
+            horizontal: 16.0,
+          ),
         ),
       ),
       home: const SplashScreen(),
@@ -68,9 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const AuthScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const AuthScreen()),
       );
     });
   }

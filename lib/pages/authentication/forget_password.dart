@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/authentication/widgets/primary_button.dart';
 
@@ -26,28 +27,49 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   // ------------------Snackbar and submit action---------
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      Get.showSnackbar(
-        GetSnackBar(
-          title: 'OTP Sent',
-          message: 'OTP is being sent to your email',
-          duration: const Duration(seconds: 2),
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          borderRadius: 8,
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          animationDuration: const Duration(milliseconds: 300),
-          isDismissible: true,
-          forwardAnimationCurve: Curves.easeOutQuint,
-          reverseAnimationCurve: Curves.easeInQuint,
-        ),
-      );
 
-      Future.delayed(const Duration(seconds: 2), () {
-        // Get.offAllNamed('/login'); // required navigation screen
-      });
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text.trim(),
+        );
+
+        Get.showSnackbar(
+          GetSnackBar(
+            title: 'Email Sent',
+            message: 'Password reset link sent to your email',
+            duration: const Duration(seconds: 2),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            borderRadius: 8,
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            animationDuration: const Duration(milliseconds: 300),
+            isDismissible: true,
+          ),
+        );
+
+        // Optional: Navigate back or to login
+        Future.delayed(const Duration(seconds: 2), () {
+          Get.back(); // or Get.toNamed('/login');
+        });
+      } on FirebaseAuthException catch (e) {
+        String errorMsg = 'Something went wrong';
+        if (e.code == 'user-not-found') {
+          errorMsg = 'No user found with this email';
+        }
+
+        Get.showSnackbar(
+          GetSnackBar(
+            title: 'Error',
+            message: errorMsg,
+            duration: const Duration(seconds: 2),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
