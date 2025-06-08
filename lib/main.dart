@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/pages/auth.dart'; // Assuming your AuthScreen file is here
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
-import 'firebase_options.dart'; // Import generated Firebase options
-import 'package:smart_distributor_app/pages/home.dart';
-import 'package:get/get.dart';
+// ignore: unused_import
+import 'package:smart_distributor_app/pages/home.dart'; // This import is kept as it might be used elsewhere
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter bindings are initialized
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions
-        .currentPlatform, // Initialize Firebase with platform-specific options
-  );
+void main() {
   runApp(const MyApp());
 }
 
@@ -19,11 +13,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'Smart Distributor App',
+      // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromRGBO(217, 50, 14, 1),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'Poppins', // A clean, modern font
+        // Define styles for input fields to match the new UI
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: const TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.w500,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16.0,
+            horizontal: 16.0,
+          ),)
       ),
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
@@ -55,14 +72,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(242, 234, 222, 1),
+     
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/app_icon.png", width: 200, height: 200),
-            SizedBox(height: 20),
-            Text(
+            // Assuming you have this image in your assets folder
+            Image.asset("assets/images/app_icon.png", width: 150, height: 150),
+            const SizedBox(height: 20),
+            const Text(
               'Smart Distributor App',
               style: TextStyle(
                 fontSize: 24,
@@ -70,8 +88,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            //SizedBox(height: 10),
-            //CircularProgressIndicator(color: Colors.white),
           ],
         ),
       ),
