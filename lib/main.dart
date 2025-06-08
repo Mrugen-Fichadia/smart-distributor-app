@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Smart Distributor App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromRGBO(217, 50, 14, 1),
+        ),
       ),
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
@@ -45,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const MyHomePage(title: 'Home Page'),
+          builder: (context) => const MyHomePage(),
         ),
       );
     });
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: Color.fromRGBO(242, 234, 222, 1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Smart Distributor App',
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.white,
+                color: const Color.fromRGBO(217, 50, 14, 1),
                 fontWeight: FontWeight.bold,
               ),
             ),
