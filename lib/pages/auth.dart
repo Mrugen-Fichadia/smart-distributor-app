@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'sign_up_additional.dart';
 
 // Enum for the two main views
 enum AuthMode { signIn, signUp }
@@ -28,6 +27,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _agencyNameController = TextEditingController();
   final _distributorNumberController = TextEditingController();
 
+  String? _selectedCompany;
   UserRole _selectedRole = UserRole.distributor;
 
   @override
@@ -84,46 +84,19 @@ class _AuthScreenState extends State<AuthScreen> {
               child: const Text(
                 'Forgot Password?',
                 style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
+                    color: Colors.blue, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           const SizedBox(height: 24),
-          Text(
-            "Select Role",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _RoleSquareCard(
-                label: 'Distributor',
-                imagePath: 'assets/images/boss.png',
-                selected: _selectedRole == UserRole.distributor,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.distributor);
-                },
-              ),
-              _RoleSquareCard(
-                label: 'Manager',
-                imagePath: 'assets/images/manager.png',
-                selected: _selectedRole == UserRole.manager,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.manager);
-                },
-              ),
-              _RoleSquareCard(
-                label: 'Worker',
-                imagePath: 'assets/images/editor.png',
-                selected: _selectedRole == UserRole.worker,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.worker);
-                },
-              ),
-            ],
+          _CustomToggle(
+            selectedIndex: _selectedRole.index,
+            labels: const ['Distributor', 'Manager', 'Worker'],
+            onTap: (index) {
+              setState(() {
+                _selectedRole = UserRole.values[index];
+              });
+            },
           ),
         ],
       ),
@@ -156,6 +129,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 !value!.contains('@') ? 'Please enter a valid email.' : null,
           ),
           const SizedBox(height: 16),
+          // OTP Field with Send Button
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -173,9 +147,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: TextButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('OTP Sent!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('OTP Sent!')),
+                    );
                   },
                   child: const Text('Send OTP'),
                 ),
@@ -191,17 +165,66 @@ class _AuthScreenState extends State<AuthScreen> {
                 value!.length < 6 ? 'Password must be 6+ characters.' : null,
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Confirm Password'),
-            obscureText: true,
-            validator: (value) {
-              if (value != _passwordController.text) {
-                return 'Passwords do not match';
-              }
-              return null;
-            },
+          DropdownButtonFormField<String>(
+            value: _selectedCompany,
+            decoration: const InputDecoration(labelText: 'Select Company'),
+            items: ['Company 1', 'Company 2', 'Company 3', 'Company 4']
+                .map((company) =>
+                    DropdownMenuItem(value: company, child: Text(company)))
+                .toList(),
+            onChanged: (value) => setState(() => _selectedCompany = value),
+            validator: (value) =>
+                value == null ? 'Please select a company.' : null,
           ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _agencyNameController,
+            decoration: const InputDecoration(labelText: 'Agency Name'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _distributorNumberController,
+            decoration: const InputDecoration(labelText: 'Distributor Number'),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 24),
+          _buildAdditionalOptionsSection(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAdditionalOptionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Additional Options',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        _buildOptionTile('Add Manager'),
+        _buildOptionTile('Add Worker'),
+        _buildOptionTile('Add Distribution Center'),
+        _buildOptionTile('Add Vehicle'),
+      ],
+    );
+  }
+
+  Widget _buildOptionTile(String title) {
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        trailing: Icon(Icons.add, color: Colors.blue[600]),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tapped on $title')),
+          );
+        },
       ),
     );
   }
@@ -221,24 +244,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
                   const SizedBox(height: 20),
-                  // Logo at center
-                  Center(
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                        'assets/images/app_icon.png', // <-- Replace with your logo asset
-                      ), // <-- Replace with your logo asset
-                      backgroundColor: Colors.transparent,
-                    ),
+                  const Text(
+                    'LPG Distribution App',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   const Text(
                     'Welcome to our LPG distribution service!',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black54,
-                    ),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
@@ -254,11 +271,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     duration: const Duration(milliseconds: 300),
                     transitionBuilder:
                         (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
+                      return FadeTransition(opacity: animation, child: child);
+                    },
                     child: _authMode == AuthMode.signIn
                         ? _buildSignInForm()
                         : _buildSignUpForm(),
@@ -273,21 +287,10 @@ class _AuthScreenState extends State<AuthScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
               child: _AuthButton(
-                label: _authMode == AuthMode.signIn ? 'Sign In' : 'Continue',
-                authMode: _authMode,
-                signInFormKey: _signInFormKey,
-                signUpFormKey: _signUpFormKey,
-                onSignUpContinue: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AdditionalSignUpPage(),
-                    ),
-                  );
-                },
-                onSignIn: () {
-                  // Handle sign in logic here (e.g., call API or navigate to home)
-                },
+                label: _authMode == AuthMode.signIn ? 'Sign In' : 'Sign Up',
+                onPressed: () {
+                  // TODO: Handle sign in or sign up logic
+                }
               ),
             ),
           ],
@@ -331,11 +334,10 @@ class _CustomToggle extends StatelessWidget {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 5,
                             spreadRadius: 1,
-                          ),
+                          )
                         ]
                       : [],
                 ),
@@ -343,9 +345,8 @@ class _CustomToggle extends StatelessWidget {
                   child: Text(
                     labels[index],
                     style: TextStyle(
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected ? Colors.black : Colors.black54,
                     ),
                   ),
@@ -362,35 +363,16 @@ class _CustomToggle extends StatelessWidget {
 // Custom widget for the main authentication button
 class _AuthButton extends StatelessWidget {
   final String label;
-  final AuthMode authMode;
-  final GlobalKey<FormState> signInFormKey;
-  final GlobalKey<FormState> signUpFormKey;
-  final VoidCallback onSignUpContinue;
-  final VoidCallback onSignIn;
+  final VoidCallback onPressed;
 
-  const _AuthButton({
-    required this.label,
-    required this.authMode,
-    required this.signInFormKey,
-    required this.signUpFormKey,
-    required this.onSignUpContinue,
-    required this.onSignIn,
-  });
+  const _AuthButton({required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          if (authMode == AuthMode.signUp &&
-              signUpFormKey.currentState!.validate()) {
-            onSignUpContinue();
-          } else if (authMode == AuthMode.signIn &&
-              signInFormKey.currentState!.validate()) {
-            onSignIn();
-          }
-        },
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
@@ -398,57 +380,12 @@ class _AuthButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         child: Text(label),
-      ),
-    );
-  }
-}
-
-class _RoleSquareCard extends StatelessWidget {
-  final String label;
-  final String imagePath;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _RoleSquareCard({
-    required this.label,
-    required this.imagePath,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 90,
-        height: 100,
-        decoration: BoxDecoration(
-          color: selected ? Colors.blue.shade50 : Colors.white,
-          border: Border.all(
-            color: selected ? Colors.blue : Colors.grey.shade300,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(imagePath, width: 40, height: 40),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: selected ? Colors.blue : Colors.black,
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
