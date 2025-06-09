@@ -85,8 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'smart-distribution-app.firebasestorage.app',
     measurementId: 'G-TX9JLY0H21',
   );
-<<<<<<< HEAD
-
-=======
->>>>>>> 477952224e6bfe18f11e318aca95f34679924f54
 }
