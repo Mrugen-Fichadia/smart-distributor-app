@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'home.dart'; // Import your home.dart file
+import 'forgotpass.dart';
 
 // Enum for the two main views
 enum AuthMode { signIn, signUp }
@@ -9,6 +12,12 @@ enum AuthMode { signIn, signUp }
 enum UserRole { distributor, manager, worker }
 
 class AuthScreen extends StatefulWidget {
+  // Initialize static color variables to prevent null errors
+  static const Color darkGray = Color(0xFF666666);
+  static const Color lightMaroon = Color(0xFFB22222);
+  static const Color primaryMaroon = Color(0xFF8B0000);
+  static const Color offWhite = Color(0xFFFAF9F6);
+
   const AuthScreen({super.key});
 
   @override
@@ -32,6 +41,13 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _selectedCompany;
   UserRole _selectedRole = UserRole.distributor;
 
+  // Color scheme (kept for reference, but static variables in AuthScreen are used)
+  static const Color primaryMaroon = Color(0xFF8B0000);
+  static const Color lightMaroon = Color(0xFFB22222);
+  static const Color offWhite = Color(0xFFFAF9F6);
+  static const Color lightGray = Color(0xFFF5F5F5);
+  static const Color darkGray = Color(0xFF666666);
+
   // --- STATE & METHODS FOR DYNAMIC FORMS ---
 
   final List<Map<String, dynamic>> _managerControllers = [];
@@ -44,12 +60,17 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isDistributionCenterExpanded = false;
   bool _isVehicleExpanded = false;
 
-
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.poppins(color: Colors.white)),
+        backgroundColor: primaryMaroon,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
   }
-  
+
   // --- Firebase Submit Logic ---
   Future<void> _submit() async {
     final isValid = _authMode == AuthMode.signIn
@@ -74,58 +95,78 @@ class _AuthScreenState extends State<AuthScreen> {
           password: _passwordController.text.trim(),
         );
 
-        final List<Map<String, String>> managers = _managerControllers
-          .where((m) => m['isSaved'] == true)
-          .map<Map<String, String>>((m) => {
-                  'name': m['name']!.text,
-                  'email': m['email']!.text,
-                  'mobile': m['mobile']!.text,
-                })
-          .toList();
-
-        final List<Map<String, String>> workers = _workerControllers
-          .where((w) => w['isSaved'] == true)
-          .map<Map<String, String>>((w) => {
-                  'name': w['name']!.text,
-                  'email': w['email']!.text,
-                  'mobile': w['mobile']!.text,
-                })
-          .toList();
-
-        final List<String> distributionCenters = _distributionCenterControllers
-          .where((dc) => dc['isSaved'] == true)
-          .map<String>((dc) => dc['name']!.text)
-          .toList();
-
-        final List<String> vehicles = _vehicleControllers
-          .where((v) => v['isSaved'] == true)
-          .map<String>((v) => v['name']!.text)
-          .toList();
-
-        await FirebaseFirestore.instance
+        final userId = authResult.user!.uid;
+        final userDocRef = FirebaseFirestore.instance
             .collection('users')
-            .doc(authResult.user!.uid)
-            .set({
+            .doc(userId);
+
+        // Save user document with basic fields
+        await userDocRef.set({
           'fullName': _fullNameController.text.trim(),
           'email': _emailController.text.trim(),
           'company': _selectedCompany,
           'agencyName': _agencyNameController.text.trim(),
           'distributorNumber': _distributorNumberController.text.trim(),
           'role': 'distributor',
-          'managers': managers,
-          'workers': workers,
-          'distributionCenters': distributionCenters,
-          'vehicles': vehicles,
           'createdAt': Timestamp.now(),
         });
-        
-        // After signing up, navigate to distributor home
-        if (mounted) {
-           Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const DistributorHomeScreen()),
-              );
+
+        // Save managers to subcollection
+        final managersCollection = userDocRef.collection('managers');
+        for (var manager in _managerControllers.where(
+          (m) => m['isSaved'] == true,
+        )) {
+          await managersCollection.add({
+            'name': manager['name']!.text.trim(),
+            'email': manager['email']!.text.trim(),
+            'mobile': manager['mobile']!.text.trim(),
+            'createdAt': Timestamp.now(),
+          });
         }
 
+        // Save workers to subcollection
+        final workersCollection = userDocRef.collection('workers');
+        for (var worker in _workerControllers.where(
+          (w) => w['isSaved'] == true,
+        )) {
+          await workersCollection.add({
+            'name': worker['name']!.text.trim(),
+            'email': worker['email']!.text.trim(),
+            'mobile': worker['mobile']!.text.trim(),
+            'createdAt': Timestamp.now(),
+          });
+        }
+
+        // Save distribution centers to subcollection
+        final distributionCentersCollection = userDocRef.collection(
+          'distributionCenters',
+        );
+        for (var dc in _distributionCenterControllers.where(
+          (dc) => dc['isSaved'] == true,
+        )) {
+          await distributionCentersCollection.add({
+            'name': dc['name']!.text.trim(),
+            'createdAt': Timestamp.now(),
+          });
+        }
+
+        // Save vehicles to subcollection
+        final vehiclesCollection = userDocRef.collection('vehicles');
+        for (var vehicle in _vehicleControllers.where(
+          (v) => v['isSaved'] == true,
+        )) {
+          await vehiclesCollection.add({
+            'name': vehicle['name']!.text.trim(),
+            'createdAt': Timestamp.now(),
+          });
+        }
+
+        // After signing up, navigate to home.dart
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (ctx) => const MyHomePage(title: '')),
+          );
+        }
       } else {
         // --- SIGN IN LOGIC (FOR ALL ROLES) ---
         authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -148,27 +189,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
         if (!mounted) return;
 
-        // Navigate based on role
-        switch(userRole) {
-          case 'distributor':
-             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const DistributorHomeScreen()),
-              );
-            break;
-          case 'manager':
-             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const ManagerHomeScreen()),
-              );
-            break;
-          case 'worker':
-             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const WorkerHomeScreen()),
-              );
-            break;
-          default:
-             _showSnackBar('Unknown role. Cannot log in.');
-             await FirebaseAuth.instance.signOut(); // Sign out user with unknown role
-        }
+        // Navigate to home.dart regardless of role
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (ctx) => const MyHomePage(title: '')),
+        );
       }
     } on FirebaseAuthException catch (err) {
       var message = 'An error occurred, please check your credentials!';
@@ -187,7 +211,6 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     }
   }
-
 
   // --- Manager Methods ---
   void _addManagerField() {
@@ -211,7 +234,19 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         manager['isSaved'] = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Manager Saved"), backgroundColor: Colors.green,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Manager Saved Successfully!",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     } else {
       _showSnackBar("Please fill all manager fields before saving");
     }
@@ -245,7 +280,19 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         worker['isSaved'] = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Worker Saved"), backgroundColor: Colors.green,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Worker Saved Successfully!",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     } else {
       _showSnackBar("Please fill all worker fields before saving");
     }
@@ -274,7 +321,19 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         dc['isSaved'] = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Distribution Center Saved"), backgroundColor: Colors.green,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Distribution Center Saved Successfully!",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     } else {
       _showSnackBar("Please enter a name before saving");
     }
@@ -303,7 +362,19 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         vehicle['isSaved'] = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vehicle Saved"), backgroundColor: Colors.green,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Vehicle Saved Successfully!",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     } else {
       _showSnackBar("Please enter a name before saving");
     }
@@ -314,7 +385,6 @@ class _AuthScreenState extends State<AuthScreen> {
       _vehicleControllers[index]['isSaved'] = false;
     });
   }
-
 
   @override
   void dispose() {
@@ -357,70 +427,106 @@ class _AuthScreenState extends State<AuthScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Welcome back",
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          Text(
+            "Welcome Back",
+            style: GoogleFonts.poppins(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: AuthScreen.primaryMaroon,
+            ),
           ),
-          const SizedBox(height: 24),
-          TextFormField(
+          const SizedBox(height: 8),
+          Text(
+            "Sign in to your LPG distribution account",
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: AuthScreen.darkGray,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildStyledTextField(
             controller: _emailController,
-            decoration: const InputDecoration(labelText: 'Email'),
+            label: 'Email Address',
+            icon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: (value) =>
                 !value!.contains('@') ? 'Please enter a valid email.' : null,
           ),
-          const SizedBox(height: 16),
-          TextFormField(
+          const SizedBox(height: 20),
+          _buildStyledTextField(
             controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password (or Mobile No. for Staff)'),
+            label: 'Password (or Mobile No. for Staff)',
+            icon: Icons.lock_outline,
             obscureText: true,
             validator: (value) =>
                 value!.length < 6 ? 'Password must be 6+ characters.' : null,
           ),
           const SizedBox(height: 16),
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {},
-              child: const Text(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ForgotPasswordScreen(),
+                  ),
+                );
+              },
+              child: Text(
                 'Forgot Password?',
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(
+                  color: AuthScreen.primaryMaroon,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          const Text(
-            "Select Role",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          const SizedBox(height: 32),
+          Text(
+            "Select Your Role",
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+              color: AuthScreen.primaryMaroon,
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _RoleSquareCard(
-                label: 'Distributor',
-                imagePath: 'assets/images/boss.png',
-                selected: _selectedRole == UserRole.distributor,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.distributor);
-                },
+              Flexible(
+                child: _RoleSquareCard(
+                  label: 'Distributor',
+                  imagePath: 'assets/images/boss.png',
+                  selected: _selectedRole == UserRole.distributor,
+                  onTap: () {
+                    setState(() => _selectedRole = UserRole.distributor);
+                  },
+                ),
               ),
-              _RoleSquareCard(
-                label: 'Manager',
-                imagePath: 'assets/images/manager.png',
-                selected: _selectedRole == UserRole.manager,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.manager);
-                },
+              const SizedBox(width: 8),
+              Flexible(
+                child: _RoleSquareCard(
+                  label: 'Manager',
+                  imagePath: 'assets/images/manager.png',
+                  selected: _selectedRole == UserRole.manager,
+                  onTap: () {
+                    setState(() => _selectedRole = UserRole.manager);
+                  },
+                ),
               ),
-              _RoleSquareCard(
-                label: 'Worker',
-                imagePath: 'assets/images/editor.png',
-                selected: _selectedRole == UserRole.worker,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.worker);
-                },
+              const SizedBox(width: 8),
+              Flexible(
+                child: _RoleSquareCard(
+                  label: 'Worker',
+                  imagePath: 'assets/images/editor.png',
+                  selected: _selectedRole == UserRole.worker,
+                  onTap: () {
+                    setState(() => _selectedRole = UserRole.worker);
+                  },
+                ),
               ),
             ],
           ),
@@ -430,72 +536,208 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildSignUpForm() {
-    return Form(
-      key: _signUpFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Create an account",
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      child: Form(
+        key: _signUpFormKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Create Account",
+              style: GoogleFonts.poppins(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AuthScreen.primaryMaroon,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Join our LPG distribution network",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: AuthScreen.darkGray,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 32),
+            _buildStyledTextField(
+              controller: _fullNameController,
+              label: 'Full Name',
+              icon: Icons.person_outline,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter your full name.' : null,
+            ),
+            const SizedBox(height: 20),
+            _buildStyledTextField(
+              controller: _emailController,
+              label: 'Email Address',
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) =>
+                  !value!.contains('@') ? 'Please enter a valid email.' : null,
+            ),
+            const SizedBox(height: 20),
+            _buildStyledTextField(
+              controller: _passwordController,
+              label: 'Password',
+              icon: Icons.lock_outline,
+              obscureText: true,
+              validator: (value) =>
+                  value!.length < 6 ? 'Password must be 6+ characters.' : null,
+            ),
+            const SizedBox(height: 20),
+            _buildStyledDropdown(),
+            const SizedBox(height: 20),
+            _buildStyledTextField(
+              controller: _agencyNameController,
+              label: 'Agency Name',
+              icon: Icons.business_outlined,
+            ),
+            const SizedBox(height: 20),
+            _buildStyledTextField(
+              controller: _distributorNumberController,
+              label: 'Distributor Number',
+              icon: Icons.numbers_outlined,
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 32),
+            _buildAdditionalOptionsSection(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AuthScreen.offWhite,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: 24),
-          TextFormField(
-            controller: _fullNameController,
-            decoration: const InputDecoration(labelText: 'Full Name'),
-            validator: (value) =>
-                value!.isEmpty ? 'Please enter your full name.' : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: 'Email'),
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) =>
-                !value!.contains('@') ? 'Please enter a valid email.' : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
-            obscureText: true,
-            validator: (value) =>
-                value!.length < 6 ? 'Password must be 6+ characters.' : null,
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            isExpanded: true,
-            value: _selectedCompany,
-            decoration: const InputDecoration(labelText: 'Select Company'),
-            items: [
-              'Indian Oil Corporation Ltd. (Indane)',
-              'Bharat Petroleum Corporation Ltd.',
-              'Hindustan Petroleum Corporation Ltd.',
-              'Reliance Petroleum Ltd.',
-              'Total Energies SE',
-              'Shell',
-            ]
-                .map((company) =>
-                    DropdownMenuItem(value: company, child: Text(company, overflow: TextOverflow.ellipsis)))
-                .toList(),
-            onChanged: (value) => setState(() => _selectedCompany = value),
-            validator: (value) =>
-                value == null ? 'Please select a company.' : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _agencyNameController,
-            decoration: const InputDecoration(labelText: 'Agency Name'),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _distributorNumberController,
-            decoration: const InputDecoration(labelText: 'Distributor Number'),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 24),
-          _buildAdditionalOptionsSection(),
         ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        validator: validator,
+        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: GoogleFonts.poppins(
+            color: AuthScreen.darkGray,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(icon, color: AuthScreen.primaryMaroon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(
+              color: AuthScreen.primaryMaroon,
+              width: 2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
+          filled: true,
+          fillColor: AuthScreen.offWhite,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AuthScreen.offWhite,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        isExpanded: true,
+        value: _selectedCompany,
+        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
+        decoration: InputDecoration(
+          labelText: 'Select Company',
+          labelStyle: GoogleFonts.poppins(
+            color: AuthScreen.darkGray,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: const Icon(
+            Icons.business,
+            color: AuthScreen.primaryMaroon,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(
+              color: AuthScreen.primaryMaroon,
+              width: 2,
+            ),
+          ),
+          filled: true,
+          fillColor: AuthScreen.offWhite,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+        ),
+        items:
+            [
+                  'Indian Oil Corporation Ltd. (Indane)',
+                  'Bharat Petroleum Corporation Ltd.',
+                  'Hindustan Petroleum Corporation Ltd.',
+                  'Reliance Petroleum Ltd.',
+                  'Total Energies SE',
+                  'Shell',
+                ]
+                .map(
+                  (company) => DropdownMenuItem(
+                    value: company,
+                    child: Text(
+                      company,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(),
+                    ),
+                  ),
+                )
+                .toList(),
+        onChanged: (value) => setState(() => _selectedCompany = value),
+        validator: (value) => value == null ? 'Please select a company.' : null,
       ),
     );
   }
@@ -504,11 +746,56 @@ class _AuthScreenState extends State<AuthScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Additional Options',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AuthScreen.primaryMaroon.withOpacity(0.1),
+                AuthScreen.lightMaroon.withOpacity(0.05),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: AuthScreen.primaryMaroon.withOpacity(0.2),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.add_business,
+                    color: AuthScreen.primaryMaroon,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Additional Setup',
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AuthScreen.primaryMaroon,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Configure your team and resources (Optional)',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AuthScreen.darkGray,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         _buildManagerSection(),
         _buildWorkerSection(),
         _buildDistributionCenterSection(),
@@ -518,160 +805,190 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildManagerSection() {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
-        title: const Text('Add Manager',
-            style: TextStyle(fontWeight: FontWeight.w500)),
-        trailing: Icon(
-          _isManagerExpanded ? Icons.remove : Icons.add,
-          color: Colors.blue[600],
-        ),
-        onExpansionChanged: (isExpanded) {
-          setState(() {
-            _isManagerExpanded = isExpanded;
-          });
-        },
-        children: [
-          ..._managerControllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final manager = entry.value;
-            return _buildPersonForm(
-                person: manager,
-                index: index,
-                onSave: _saveManager,
-                onEdit: _editManager,
-                role: 'Manager');
-          }),
-          if (_managerControllers.isEmpty || _managerControllers.last['isSaved'])
-            _buildAddButton(
-              _addManagerField,
-              'Add More Managers',
-              Icons.person_add,
-            ),
-        ],
-      ),
+    return _buildExpandableSection(
+      title: 'Add Managers',
+      icon: Icons.supervisor_account,
+      isExpanded: _isManagerExpanded,
+      onExpansionChanged: (isExpanded) {
+        setState(() {
+          _isManagerExpanded = isExpanded;
+        });
+      },
+      children: [
+        ..._managerControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final manager = entry.value;
+          return _buildPersonForm(
+            person: manager,
+            index: index,
+            onSave: _saveManager,
+            onEdit: _editManager,
+            role: 'Manager',
+          );
+        }),
+        if (_managerControllers.isEmpty || _managerControllers.last['isSaved'])
+          _buildAddButton(_addManagerField, 'Add Manager', Icons.person_add),
+      ],
     );
   }
 
   Widget _buildWorkerSection() {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
-        title: const Text('Add Worker',
-            style: TextStyle(fontWeight: FontWeight.w500)),
-        trailing: Icon(
-          _isWorkerExpanded ? Icons.remove : Icons.add,
-          color: Colors.blue[600],
-        ),
-        onExpansionChanged: (isExpanded) {
-          setState(() {
-            _isWorkerExpanded = isExpanded;
-          });
-        },
-        children: [
-          ..._workerControllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final worker = entry.value;
-            return _buildPersonForm(
-                person: worker,
-                index: index,
-                onSave: _saveWorker,
-                onEdit: _editWorker,
-                role: 'Worker');
-          }),
-          if (_workerControllers.isEmpty || _workerControllers.last['isSaved'])
-            _buildAddButton(
-              _addWorkerField,
-              'Add More Workers',
-              Icons.person_add,
-            ),
-        ],
-      ),
+    return _buildExpandableSection(
+      title: 'Add Workers',
+      icon: Icons.engineering,
+      isExpanded: _isWorkerExpanded,
+      onExpansionChanged: (isExpanded) {
+        setState(() {
+          _isWorkerExpanded = isExpanded;
+        });
+      },
+      children: [
+        ..._workerControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final worker = entry.value;
+          return _buildPersonForm(
+            person: worker,
+            index: index,
+            onSave: _saveWorker,
+            onEdit: _editWorker,
+            role: 'Worker',
+          );
+        }),
+        if (_workerControllers.isEmpty || _workerControllers.last['isSaved'])
+          _buildAddButton(_addWorkerField, 'Add Worker', Icons.person_add),
+      ],
     );
   }
 
   Widget _buildDistributionCenterSection() {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
-        title: const Text('Add Distribution Center',
-            style: TextStyle(fontWeight: FontWeight.w500)),
-        trailing: Icon(
-          _isDistributionCenterExpanded ? Icons.remove : Icons.add,
-          color: Colors.blue[600],
-        ),
-        onExpansionChanged: (isExpanded) {
-          setState(() {
-            _isDistributionCenterExpanded = isExpanded;
-          });
-        },
-        children: [
-          ..._distributionCenterControllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final dc = entry.value;
-            return _buildSingleFieldForm(
-                item: dc,
-                index: index,
-                onSave: _saveDistributionCenter,
-                onEdit: _editDistributionCenter,
-                label: 'Distribution Center Name',
-                role: 'Center');
-          }),
-          if (_distributionCenterControllers.isEmpty ||
-              _distributionCenterControllers.last['isSaved'])
-            _buildAddButton(
-              _addDistributionCenterField,
-              'Add More Centers',
-              Icons.add_location_alt,
-            ),
-        ],
-      ),
+    return _buildExpandableSection(
+      title: 'Add Distribution Centers',
+      icon: Icons.warehouse,
+      isExpanded: _isDistributionCenterExpanded,
+      onExpansionChanged: (isExpanded) {
+        setState(() {
+          _isDistributionCenterExpanded = isExpanded;
+        });
+      },
+      children: [
+        ..._distributionCenterControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final dc = entry.value;
+          return _buildSingleFieldForm(
+            item: dc,
+            index: index,
+            onSave: _saveDistributionCenter,
+            onEdit: _editDistributionCenter,
+            label: 'Distribution Center Name',
+            role: 'Center',
+            icon: Icons.location_on,
+          );
+        }),
+        if (_distributionCenterControllers.isEmpty ||
+            _distributionCenterControllers.last['isSaved'])
+          _buildAddButton(
+            _addDistributionCenterField,
+            'Add Distribution Center',
+            Icons.add_location_alt,
+          ),
+      ],
     );
   }
 
   Widget _buildVehicleSection() {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
-        title: const Text('Add Vehicle',
-            style: TextStyle(fontWeight: FontWeight.w500)),
-        trailing: Icon(
-          _isVehicleExpanded ? Icons.remove : Icons.add,
-          color: Colors.blue[600],
-        ),
-        onExpansionChanged: (isExpanded) {
-          setState(() {
-            _isVehicleExpanded = isExpanded;
-          });
-        },
-        children: [
-          ..._vehicleControllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final vehicle = entry.value;
-            return _buildSingleFieldForm(
-                item: vehicle,
-                index: index,
-                onSave: _saveVehicle,
-                onEdit: _editVehicle,
-                label: 'Vehicle Name',
-                role: 'Vehicle');
-          }),
-          if (_vehicleControllers.isEmpty || _vehicleControllers.last['isSaved'])
-            _buildAddButton(
-              _addVehicleField,
-              'Add More Vehicles',
-              Icons.directions_car,
-            ),
+    return _buildExpandableSection(
+      title: 'Add Vehicles',
+      icon: Icons.local_shipping,
+      isExpanded: _isVehicleExpanded,
+      onExpansionChanged: (isExpanded) {
+        setState(() {
+          _isVehicleExpanded = isExpanded;
+        });
+      },
+      children: [
+        ..._vehicleControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final vehicle = entry.value;
+          return _buildSingleFieldForm(
+            item: vehicle,
+            index: index,
+            onSave: _saveVehicle,
+            onEdit: _editVehicle,
+            label: 'Vehicle Name/Number',
+            role: 'Vehicle',
+            icon: Icons.directions_car,
+          );
+        }),
+        if (_vehicleControllers.isEmpty || _vehicleControllers.last['isSaved'])
+          _buildAddButton(
+            _addVehicleField,
+            'Add Vehicle',
+            Icons.directions_car,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildExpandableSection({
+    required String title,
+    required IconData icon,
+    required bool isExpanded,
+    required Function(bool) onExpansionChanged,
+    required List<Widget> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
         ],
+        border: Border.all(color: lightGray),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AuthScreen.primaryMaroon.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: AuthScreen.primaryMaroon, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: AuthScreen.primaryMaroon,
+                ),
+              ),
+            ],
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AuthScreen.primaryMaroon.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              isExpanded ? Icons.remove : Icons.add,
+              color: AuthScreen.primaryMaroon,
+              size: 20,
+            ),
+          ),
+          onExpansionChanged: onExpansionChanged,
+          children: children,
+        ),
       ),
     );
   }
@@ -684,62 +1001,67 @@ class _AuthScreenState extends State<AuthScreen> {
     required String role,
   }) {
     final bool isSaved = person['isSaved'];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isSaved ? Colors.green.withOpacity(0.05) : AuthScreen.offWhite,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSaved ? Colors.green.withOpacity(0.3) : lightGray,
+        ),
+      ),
       child: Column(
         children: [
-          const Divider(),
-          TextFormField(
+          _buildStyledTextField(
             controller: person['name'],
-            decoration: InputDecoration(labelText: '$role Name'),
-            enabled: !isSaved,
-          ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: person['email'],
-            decoration: InputDecoration(labelText: '$role Email'),
-            keyboardType: TextInputType.emailAddress,
-            enabled: !isSaved,
-          ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: person['mobile'],
-            decoration: InputDecoration(labelText: '$role Mobile'),
-            keyboardType: TextInputType.phone,
-            enabled: !isSaved,
+            label: '$role Name',
+            icon: Icons.person,
           ),
           const SizedBox(height: 12),
+          _buildStyledTextField(
+            controller: person['email'],
+            label: '$role Email',
+            icon: Icons.email,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 12),
+          _buildStyledTextField(
+            controller: person['mobile'],
+            label: '$role Mobile',
+            icon: Icons.phone,
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 16),
           if (!isSaved)
-            ElevatedButton.icon(
+            _buildActionButton(
               onPressed: () => onSave(index),
-              icon: const Icon(Icons.check),
-              label: Text("Save $role"),
+              label: "Save $role",
+              icon: Icons.check,
+              isPrimary: true,
             ),
           if (isSaved)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "$role Saved!",
-                  style: TextStyle(
-                      color: Colors.green[700], fontWeight: FontWeight.bold),
-                ),
+                Icon(Icons.check_circle, color: Colors.green, size: 20),
                 const SizedBox(width: 8),
-                SizedBox(
-                  height: 30,
-                  child: OutlinedButton.icon(
-                    onPressed: () => onEdit(index),
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      side: BorderSide(color: Colors.grey.shade400)
-                    ),
+                Text(
+                  "$role Saved Successfully!",
+                  style: GoogleFonts.poppins(
+                    color: Colors.green[700],
+                    fontWeight: FontWeight.w600,
                   ),
+                ),
+                const SizedBox(width: 16),
+                _buildActionButton(
+                  onPressed: () => onEdit(index),
+                  label: 'Edit',
+                  icon: Icons.edit,
+                  isPrimary: false,
                 ),
               ],
             ),
-          const SizedBox(height: 12),
         ],
       ),
     );
@@ -752,66 +1074,106 @@ class _AuthScreenState extends State<AuthScreen> {
     required void Function(int) onEdit,
     required String label,
     required String role,
+    required IconData icon,
   }) {
     final bool isSaved = item['isSaved'];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isSaved ? Colors.green.withOpacity(0.05) : AuthScreen.offWhite,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSaved ? Colors.green.withOpacity(0.3) : lightGray,
+        ),
+      ),
       child: Column(
         children: [
-          const Divider(),
-          TextFormField(
+          _buildStyledTextField(
             controller: item['name'],
-            decoration: InputDecoration(labelText: label),
-            enabled: !isSaved,
+            label: label,
+            icon: icon,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           if (!isSaved)
-            ElevatedButton.icon(
+            _buildActionButton(
               onPressed: () => onSave(index),
-              icon: const Icon(Icons.check),
-              label: Text("Save $role"),
+              label: "Save $role",
+              icon: Icons.check,
+              isPrimary: true,
             ),
           if (isSaved)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "$role Saved!",
-                  style: TextStyle(
-                      color: Colors.green[700], fontWeight: FontWeight.bold),
-                ),
+                Icon(Icons.check_circle, color: Colors.green, size: 20),
                 const SizedBox(width: 8),
-                 SizedBox(
-                  height: 30,
-                  child: OutlinedButton.icon(
-                    onPressed: () => onEdit(index),
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      side: BorderSide(color: Colors.grey.shade400)
-                    ),
+                Text(
+                  "$role Saved Successfully!",
+                  style: GoogleFonts.poppins(
+                    color: Colors.green[700],
+                    fontWeight: FontWeight.w600,
                   ),
+                ),
+                const SizedBox(width: 16),
+                _buildActionButton(
+                  onPressed: () => onEdit(index),
+                  label: 'Edit',
+                  icon: Icons.edit,
+                  isPrimary: false,
                 ),
               ],
             ),
-          const SizedBox(height: 12),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required VoidCallback onPressed,
+    required String label,
+    required IconData icon,
+    required bool isPrimary,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 18),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isPrimary ? AuthScreen.primaryMaroon : Colors.white,
+        foregroundColor: isPrimary ? Colors.white : AuthScreen.primaryMaroon,
+        side: isPrimary
+            ? null
+            : const BorderSide(color: AuthScreen.primaryMaroon),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        textStyle: GoogleFonts.poppins(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       ),
     );
   }
 
   Widget _buildAddButton(VoidCallback onPressed, String label, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: OutlinedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon),
-        label: Text(label),
+        icon: Icon(icon, color: AuthScreen.primaryMaroon),
+        label: Text(
+          label,
+          style: GoogleFonts.poppins(
+            color: AuthScreen.primaryMaroon,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.blue.shade300),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          side: const BorderSide(color: AuthScreen.primaryMaroon, width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         ),
       ),
     );
@@ -820,61 +1182,137 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AuthScreen.offWhite,
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: ListView(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                children: [
-                  const SizedBox(height: 20),
-                  Center(
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                        'assets/images/app_icon.png',
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    // App Logo and Header
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AuthScreen.primaryMaroon,
+                            AuthScreen.lightMaroon,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AuthScreen.primaryMaroon.withOpacity(0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                       ),
-                      backgroundColor: Colors.transparent,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Image.asset(
+                              'assets/images/app_icon.png',
+                              height: 60,
+                              width: 60,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'LPG Distribution Hub',
+                            style: GoogleFonts.poppins(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Streamline your gas distribution operations',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.9),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Welcome to our LPG distribution service!',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 30),
-                  _CustomToggle(
-                    selectedIndex: _authMode.index,
-                    labels: const ['Sign In', 'Sign Up'],
-                    onTap: (index) {
-                      _switchAuthMode(AuthMode.values[index]);
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder:
-                        (Widget child, Animation<double> animation) {
-                      return FadeTransition(opacity: animation, child: child);
-                    },
-                    child: _authMode == AuthMode.signIn
-                        ? _buildSignInForm()
-                        : _buildSignUpForm(),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 32),
+                    _CustomToggle(
+                      selectedIndex: _authMode.index,
+                      labels: const ['Sign In', 'Sign Up'],
+                      onTap: (index) {
+                        _switchAuthMode(AuthMode.values[index]);
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                      child: _authMode == AuthMode.signIn
+                          ? _buildSignInForm()
+                          : _buildSignUpForm(),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(
+                            color: AuthScreen.primaryMaroon,
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            'Processing...',
+                            style: GoogleFonts.poppins(
+                              color: AuthScreen.primaryMaroon,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   : _AuthButton(
-                      label: _authMode == AuthMode.signIn ? 'Sign In' : 'Sign Up',
+                      label: _authMode == AuthMode.signIn
+                          ? 'Sign In'
+                          : 'Create Account',
                       onPressed: _submit,
                     ),
             ),
@@ -899,10 +1337,17 @@ class _CustomToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 60,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(25),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: List.generate(labels.length, (index) {
@@ -911,27 +1356,40 @@ class _CustomToggle extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTap(index),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 300),
+                margin: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(25),
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [
+                            AuthScreen.primaryMaroon,
+                            AuthScreen.lightMaroon,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isSelected ? null : Colors.transparent,
+                  borderRadius: BorderRadius.circular(26),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
+                            color: AuthScreen.primaryMaroon.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
                         ]
                       : [],
                 ),
                 child: Center(
                   child: Text(
                     labels[index],
-                    style: TextStyle(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.black : Colors.black54,
+                    style: GoogleFonts.poppins(
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w600,
+                      color: isSelected ? Colors.white : AuthScreen.darkGray,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -952,23 +1410,41 @@ class _AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      height: 60,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AuthScreen.primaryMaroon, AuthScreen.lightMaroon],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: AuthScreen.primaryMaroon.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[600],
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child: Text(label),
+        child: Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -991,116 +1467,67 @@ class _RoleSquareCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 90,
-        height: 100,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 100,
+        height: 120,
         decoration: BoxDecoration(
-          color: selected ? Colors.blue.shade50 : Colors.white,
+          gradient: selected
+              ? LinearGradient(
+                  colors: [
+                    AuthScreen.primaryMaroon.withOpacity(0.1),
+                    AuthScreen.lightMaroon.withOpacity(0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: selected ? null : Colors.white,
           border: Border.all(
-            color: selected ? Colors.blue : Colors.grey.shade300,
-            width: 2,
+            color: selected ? Colors.green : Colors.grey.shade300,
+            width: selected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: selected
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, width: 40, height: 40),
-            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: selected
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Image.asset(
+                imagePath,
+                width: 32,
+                height: 32,
+                color: selected ? Colors.green : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 12),
             Text(
               label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: selected ? Colors.blue : Colors.black,
-                fontSize: 12,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: selected ? Colors.green : AuthScreen.darkGray,
+                fontSize: 13,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// --- PLACEHOLDER HOME SCREENS ---
-// In a real app, these would be in their own files.
-
-class DistributorHomeScreen extends StatelessWidget {
-  const DistributorHomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Distributor Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
-              );
-            },
-          )
-        ],
-      ),
-      body: const Center(
-        child: Text('Welcome, Distributor!'),
-      ),
-    );
-  }
-}
-
-class ManagerHomeScreen extends StatelessWidget {
-  const ManagerHomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Manager Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
-              );
-            },
-          )
-        ],
-      ),
-      body: const Center(
-        child: Text('Welcome, Manager!'),
-      ),
-    );
-  }
-}
-
-class WorkerHomeScreen extends StatelessWidget {
-  const WorkerHomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Worker Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
-              );
-            },
-          )
-        ],
-      ),
-      body: const Center(
-        child: Text('Welcome, Worker!'),
       ),
     );
   }
