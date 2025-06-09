@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -39,16 +48,6 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCyaRoIa9bNBLnjy_L6QMzLehI2EDr6zwg',
-    appId: '1:654105791492:web:4207beffb6a668313bf951',
-    messagingSenderId: '654105791492',
-    projectId: 'smart-distribution-app',
-    authDomain: 'smart-distribution-app.firebaseapp.com',
-    storageBucket: 'smart-distribution-app.firebasestorage.app',
-    measurementId: 'G-03TYPV7RCX',
-  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAP_SGZ-8uxOg-oktRAIEj0Jp2p9d8IvNE',
@@ -65,24 +64,5 @@ class DefaultFirebaseOptions {
     projectId: 'smart-distribution-app',
     storageBucket: 'smart-distribution-app.firebasestorage.app',
     iosBundleId: 'com.example.smartDistributorApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCyBrFQVQxid82vSGe4ZLv5-CgEmiQ3gy4',
-    appId: '1:654105791492:ios:6990ec95db3e1eab3bf951',
-    messagingSenderId: '654105791492',
-    projectId: 'smart-distribution-app',
-    storageBucket: 'smart-distribution-app.firebasestorage.app',
-    iosBundleId: 'com.example.smartDistributorApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCyaRoIa9bNBLnjy_L6QMzLehI2EDr6zwg',
-    appId: '1:654105791492:web:2d61822a5753ad4d3bf951',
-    messagingSenderId: '654105791492',
-    projectId: 'smart-distribution-app',
-    authDomain: 'smart-distribution-app.firebaseapp.com',
-    storageBucket: 'smart-distribution-app.firebasestorage.app',
-    measurementId: 'G-TX9JLY0H21',
   );
 }

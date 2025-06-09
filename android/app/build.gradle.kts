@@ -11,6 +11,7 @@ plugins {
 android {
     namespace = "com.example.smart_distributor_app"
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = "27.0.12077973"
     ndkVersion = "27.0.12077973" // Updated to match Firebase plugin requirements
 
     compileOptions {
@@ -25,6 +26,9 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.smart_distributor_app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 23
         // Updated minSdkVersion to 23 to meet Firebase requirements
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
