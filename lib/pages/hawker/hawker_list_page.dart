@@ -12,22 +12,22 @@ class _HawkerListPageState extends State<HawkerListPage> {
   List<Hawker> hawkers = [
     Hawker(name: 'Ram Bist', phoneNumber: '9841000001', area: 'indore'),
     Hawker(name: 'Shyam Kumar', phoneNumber: '9841000002', area: 'delhi'),
-    Hawker(name: 'Rahl', phoneNumber: '9841000003', area: 'gudgaon'),
+    Hawker(name: 'Rahul', phoneNumber: '9841000003', area: 'gudgaon'),
     Hawker(name: 'Sita', phoneNumber: '9841000004', area: 'bus park'),
-    Hawker(name: 'Sita', phoneNumber: '9841000004', area: 'khatima'),
-    Hawker(name: 'Sita', phoneNumber: '9841000004', area: 'Boud'),
+    Hawker(name: 'Gita', phoneNumber: '9841000005', area: 'khatima'),
+    Hawker(name: 'Hari', phoneNumber: '9841000006', area: 'Boud'),
   ];
 
   void _fetchHawkers() {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {});
-    });
+    setState(() {});
   }
 
   void _navigateToAddHawker() async {
     final result = await Get.to(() => const AddHawkerPage());
-    if (result == true) {
-      _fetchHawkers();
+    if (result != null && result is Hawker) {
+      setState(() {
+        hawkers.add(result);
+      });
       CustomSnackBar.show(
         title: 'Success',
         message: 'Hawker added successfully!',
@@ -38,33 +38,52 @@ class _HawkerListPageState extends State<HawkerListPage> {
     }
   }
 
-  void _navigateToEditHawker(Hawker hawker) async {
-    final result = await Get.to(() => EditHawkerPage(hawker: hawker));
-    if (result == 'updated') {
-      _fetchHawkers();
-      CustomSnackBar.show(
-        title: 'Success',
-        message: 'Hawker updated successfully!',
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        icon: const Icon(Icons.check, color: Colors.white),
-      );
-    } else if (result == 'deleted') {
-      _fetchHawkers();
-      CustomSnackBar.show(
-        title: 'Success',
-        message: 'Hawker deleted successfully!',
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        icon: const Icon(Icons.check, color: Colors.white),
-      );
+  void _navigateToEditHawker(Hawker hawkerToEdit) async {
+    final originalPhoneNumber = hawkerToEdit.phoneNumber;
+    final originalArea = hawkerToEdit.area;
+
+    final result = await Get.to(() => EditHawkerPage(hawker: hawkerToEdit));
+    if (result != null) {
+      if (result is Hawker) {
+        setState(() {
+          int index = hawkers.indexWhere(
+            (hawker) =>
+                hawker.phoneNumber == originalPhoneNumber &&
+                hawker.area == originalArea,
+          );
+          if (index != -1) {
+            hawkers[index] = result;
+          }
+        });
+        CustomSnackBar.show(
+          title: 'Success',
+          message: 'Hawker updated successfully!',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          icon: const Icon(Icons.check, color: Colors.white),
+        );
+      } else if (result == 'deleted') {
+        setState(() {
+          hawkers.removeWhere(
+            (hawker) =>
+                hawker.phoneNumber == originalPhoneNumber &&
+                hawker.area == originalArea,
+          );
+        });
+        CustomSnackBar.show(
+          title: 'Success',
+          message: 'Hawker deleted successfully!',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          icon: const Icon(Icons.check, color: Colors.white),
+        );
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchHawkers();
   }
 
   @override

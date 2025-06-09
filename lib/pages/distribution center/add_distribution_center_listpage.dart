@@ -33,7 +33,7 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
       );
 
       print('Saving New Distribution Center: ${newDistributionCenter.toMap()}');
-      Get.back(result: true);
+      Get.back(result: newDistributionCenter);
 
       CustomSnackBar.show(
         title: 'Success',
@@ -56,8 +56,8 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  // ------- app color palete background -------------//
-      backgroundColor: Color(0xFFF8FAFC),
+       // ------- app color palete background -------------//
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: CustomAppBar(
         title: 'Add New Distribution Center',
         centerTitle: true,
@@ -67,7 +67,7 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-  // ------------ container color from color palete----------//
+    // ------------ container color from color palete----------//
             color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
@@ -110,4 +110,3 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
     );
   }
 }
-

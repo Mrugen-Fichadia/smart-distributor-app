@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:smart_distributor_app/imports.dart';
-// import 'package:smart_distributor_app/models/hawker.dart';
 
 class EditHawkerPage extends StatefulWidget {
   final Hawker hawker;
@@ -45,7 +43,7 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
       );
 
       print('Updating Hawker: ${updatedHawker.toMap()}');
-      Get.back(result: 'updated');
+      Get.back(result: updatedHawker);
     }
   }
 

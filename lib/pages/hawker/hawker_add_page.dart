@@ -39,12 +39,15 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
       );
 
       print('Saving New Hawker: ${newHawker.toMap()}');
-      Get.back(result: true);
+      Get.back(result: newHawker);
     } else {
-  //-- message to user - all fields needed -------
+    //-- message to user - all fields needed -------
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill all fields properly', style: TextStyle(color: Colors.white),),
+          content: Text(
+            'Please fill all fields properly',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -54,12 +57,12 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: CustomAppBar(
         title: 'Add New Hawker',
         centerTitle: true,
         onLeadingPressed: () => Get.back(),
-  // --------leading default back icon with white color -------------
+         // --------leading default back icon with white color -------------
         // leading: 
       ),
       body: Padding(

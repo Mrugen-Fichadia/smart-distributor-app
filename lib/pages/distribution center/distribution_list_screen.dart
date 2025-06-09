@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/distribution%20center/add_distribution_center_listpage.dart';
 import 'package:smart_distributor_app/pages/distribution%20center/edit_distribution_center_page.dart';
@@ -24,15 +23,15 @@ class _DistributionCenterListPageState
   ];
 
   void _fetchDistributionCenters() {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {});
-    });
+    setState(() {});
   }
 
   void _navigateToAddDistributionCenter() async {
     final result = await Get.to(() => const AddDistributionCenterPage());
-    if (result == true) {
-      _fetchDistributionCenters();
+    if (result != null && result is DistributionCenter) {
+      setState(() {
+        distributionCenters.add(result);
+      });
       CustomSnackBar.show(
         title: 'Success',
         message: 'Distribution Center added successfully!',
@@ -43,40 +42,57 @@ class _DistributionCenterListPageState
     }
   }
 
-  void _navigateToEditDistributionCenter(DistributionCenter center) async {
+  void _navigateToEditDistributionCenter(
+    DistributionCenter centerToEdit,
+  ) async {
+    final originalName = centerToEdit.name;
     final result = await Get.to(
-      () => EditDistributionCenterPage(center: center),
+      () => EditDistributionCenterPage(center: centerToEdit),
     );
-    if (result == 'updated') {
-      _fetchDistributionCenters();
-      CustomSnackBar.show(
-        title: 'Success',
-        message: 'Distribution Center updated successfully!',
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        icon: const Icon(Icons.check, color: Colors.white),
-      );
-    } else if (result == 'deleted') {
-      _fetchDistributionCenters();
-      CustomSnackBar.show(
-        title: 'Success',
-        message: 'Distribution Center deleted successfully!',
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        icon: const Icon(Icons.check, color: Colors.white),
-      );
+
+    if (result != null) {
+      if (result is DistributionCenter) {
+        setState(() {
+          int index = distributionCenters.indexWhere(
+            (center) => center.name == originalName,
+          );
+          if (index != -1) {
+            distributionCenters[index] = result;
+          }
+        });
+        CustomSnackBar.show(
+          title: 'Success',
+          message: 'Distribution Center updated successfully!',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          icon: const Icon(Icons.check, color: Colors.white),
+        );
+      } else if (result == 'deleted') {
+        setState(() {
+          distributionCenters.removeWhere(
+            (center) => center.name == originalName,
+          );
+        });
+        CustomSnackBar.show(
+          title: 'Success',
+          message: 'Distribution Center deleted successfully!',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          icon: const Icon(Icons.check, color: Colors.white),
+        );
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchDistributionCenters();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     // ------- app color palete background -------------//
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: CustomAppBar(
         title: 'Distribution Centers',
@@ -98,6 +114,7 @@ class _DistributionCenterListPageState
                 itemBuilder: (context, index) {
                   final center = distributionCenters[index];
                   return Card(
+      // ------------ container color from color palete----------//
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
