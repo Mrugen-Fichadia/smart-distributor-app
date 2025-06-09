@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'dart:async';
-// import 'package:smart_distributor_app/pages/authentication/auth.dart';
-import 'package:smart_distributor_app/pages/authentication/forget_password.dart';
+
+import 'package:smart_distributor_app/dummy_toolsscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Smart Distributor App',
       // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
@@ -43,9 +44,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      // home: const SplashScreen(),
-      home: ForgotPasswordScreen(),
       debugShowCheckedModeBanner: false,
+
+      // home: const SplashScreen(),
+      // home: ForgotPasswordScreen(),
+     home: ToolsScreen(),
     );
   }
 }

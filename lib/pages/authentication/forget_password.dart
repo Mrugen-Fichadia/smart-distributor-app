@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:smart_distributor_app/common/utils/colors.dart';
-import 'package:smart_distributor_app/pages/authentication/widgets/primary_button.dart';
+import 'package:smart_distributor_app/common/widgets/primary_button.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -211,7 +210,7 @@ class ForgotActions extends StatelessWidget {
             controller: emailController,
             decoration: InputDecoration(
               labelText: 'Email',
-              floatingLabelStyle: TextStyle(color: AppColors.kBlue),
+              floatingLabelStyle: TextStyle(color: Colors.grey),
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -219,7 +218,7 @@ class ForgotActions extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.kBlue),
+                borderSide: BorderSide(color: Colors.grey),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 vertical: 16,
@@ -236,7 +235,7 @@ class ForgotActions extends StatelessWidget {
           PrimaryButton(
             text: 'Reset Password',
             onPressed: onSubmit,
-            backgroundColor: AppColors.kBlue,
+            backgroundColor: Color(0xFFDC2626),
             textColor: Colors.white,
             borderRadius: 12.0,
             height: 46.0,
