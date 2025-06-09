@@ -26,7 +26,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
-  // final _otpController = TextEditingController(); // REMOVED
   final _agencyNameController = TextEditingController();
   final _distributorNumberController = TextEditingController();
 
@@ -35,20 +34,17 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // --- STATE & METHODS FOR DYNAMIC FORMS ---
 
-  // State to hold the controllers for dynamically added items
   final List<Map<String, dynamic>> _managerControllers = [];
   final List<Map<String, dynamic>> _workerControllers = [];
   final List<Map<String, dynamic>> _distributionCenterControllers = [];
   final List<Map<String, dynamic>> _vehicleControllers = [];
 
-  // State for tracking expansion tile state
   bool _isManagerExpanded = false;
   bool _isWorkerExpanded = false;
   bool _isDistributionCenterExpanded = false;
   bool _isVehicleExpanded = false;
 
 
-  // Helper method to show a snackbar
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red));
@@ -69,14 +65,15 @@ class _AuthScreenState extends State<AuthScreen> {
     });
 
     try {
+      UserCredential authResult;
+
       if (_authMode == AuthMode.signUp) {
-        // Sign Up Logic
-        final authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        // --- SIGN UP LOGIC (FOR DISTRIBUTORS ONLY) ---
+        authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
-        // Prepare data for Firestore
         final List<Map<String, String>> managers = _managerControllers
           .where((m) => m['isSaved'] == true)
           .map<Map<String, String>>((m) => {
@@ -105,7 +102,6 @@ class _AuthScreenState extends State<AuthScreen> {
           .map<String>((v) => v['name']!.text)
           .toList();
 
-        // Save user data to Firestore
         await FirebaseFirestore.instance
             .collection('users')
             .doc(authResult.user!.uid)
@@ -115,22 +111,65 @@ class _AuthScreenState extends State<AuthScreen> {
           'company': _selectedCompany,
           'agencyName': _agencyNameController.text.trim(),
           'distributorNumber': _distributorNumberController.text.trim(),
-          'role': 'distributor', // Assuming sign-up is for distributors
+          'role': 'distributor',
           'managers': managers,
           'workers': workers,
           'distributionCenters': distributionCenters,
           'vehicles': vehicles,
           'createdAt': Timestamp.now(),
         });
+        
+        // After signing up, navigate to distributor home
+        if (mounted) {
+           Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const DistributorHomeScreen()),
+              );
+        }
 
       } else {
-        // Sign In Logic
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        // --- SIGN IN LOGIC (FOR ALL ROLES) ---
+        authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+
+        // Fetch user role from Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user!.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          _showSnackBar('No user data found. Please contact support.');
+          return;
+        }
+
+        final userRole = userDoc.data()?['role'];
+
+        if (!mounted) return;
+
+        // Navigate based on role
+        switch(userRole) {
+          case 'distributor':
+             Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const DistributorHomeScreen()),
+              );
+            break;
+          case 'manager':
+             Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const ManagerHomeScreen()),
+              );
+            break;
+          case 'worker':
+             Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const WorkerHomeScreen()),
+              );
+            break;
+          default:
+             _showSnackBar('Unknown role. Cannot log in.');
+             await FirebaseAuth.instance.signOut(); // Sign out user with unknown role
+        }
       }
-      // Navigate to home screen or another part of the app on success
     } on FirebaseAuthException catch (err) {
       var message = 'An error occurred, please check your credentials!';
       if (err.message != null) {
@@ -138,11 +177,14 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       _showSnackBar(message);
     } catch (err) {
-      _showSnackBar('An unexpected error occurred.');
+      print("Error details: $err");
+      _showSnackBar('An unexpected error occurred. Check debug console.');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -276,11 +318,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void dispose() {
-    // Dispose all text editing controllers to prevent memory leaks
     _emailController.dispose();
     _passwordController.dispose();
     _fullNameController.dispose();
-    // _otpController.dispose(); // REMOVED
     _agencyNameController.dispose();
     _distributorNumberController.dispose();
 
@@ -332,7 +372,7 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(labelText: 'Password (or Mobile No. for Staff)'),
             obscureText: true,
             validator: (value) =>
                 value!.length < 6 ? 'Password must be 6+ characters.' : null,
@@ -415,7 +455,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 !value!.contains('@') ? 'Please enter a valid email.' : null,
           ),
           const SizedBox(height: 16),
-          // OTP ROW REMOVED
           TextFormField(
             controller: _passwordController,
             decoration: const InputDecoration(labelText: 'Password'),
@@ -460,8 +499,6 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-
-  // --- DYNAMIC FORM WIDGETS ---
 
   Widget _buildAdditionalOptionsSection() {
     return Column(
@@ -980,6 +1017,90 @@ class _RoleSquareCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// --- PLACEHOLDER HOME SCREENS ---
+// In a real app, these would be in their own files.
+
+class DistributorHomeScreen extends StatelessWidget {
+  const DistributorHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Distributor Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          )
+        ],
+      ),
+      body: const Center(
+        child: Text('Welcome, Distributor!'),
+      ),
+    );
+  }
+}
+
+class ManagerHomeScreen extends StatelessWidget {
+  const ManagerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Manager Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          )
+        ],
+      ),
+      body: const Center(
+        child: Text('Welcome, Manager!'),
+      ),
+    );
+  }
+}
+
+class WorkerHomeScreen extends StatelessWidget {
+  const WorkerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Worker Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          )
+        ],
+      ),
+      body: const Center(
+        child: Text('Welcome, Worker!'),
       ),
     );
   }
