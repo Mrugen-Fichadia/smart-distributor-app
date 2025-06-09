@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/pages/auth.dart'; // Assuming your AuthScreen file is here
-import 'dart:async';
-import 'package:smart_distributor_app/pages/home.dart'; // This import is kept as it might be used elsewhere
+// Import Firebase Core
+import 'package:firebase_core/firebase_core.dart';
+// Import the generated Firebase options file
+import 'package:smart_distributor_app/firebase_options.dart'; 
 
-void main() {
+import 'package:smart_distributor_app/pages/auth.dart';
+import 'dart:async';
+import 'package:smart_distributor_app/pages/home.dart';
+
+// The main function now needs to be async to await Firebase initialization
+void main() async {
+  // Ensure Flutter widgets are initialized before running any other code
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase with the options for the current platform
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -14,12 +26,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Smart Distributor App',
-      // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Poppins', // A clean, modern font
-        // Define styles for input fields to match the new UI
+        fontFamily: 'Poppins',
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(
             color: Colors.black54,
@@ -78,13 +88,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Changed background color to match the new app theme
       backgroundColor: Colors.blue[600],
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Assuming you have this image in your assets folder
             Image.asset("assets/images/app_icon.png", width: 150, height: 150),
             const SizedBox(height: 20),
             const Text(
