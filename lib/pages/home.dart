@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/pages/dashboard.dart';
+import 'package:smart_distributor_app/pages/tools.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -151,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
         index: _currentIndex,
         children: [
           Dashboard(),
-
+          Tools(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -164,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _currentIndex = index;
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -175,9 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.inventory),
+              child: Icon(Icons.build),
             ),
-            label: "Stock",
+            label: "Tools",
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -196,9 +197,9 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.person),
+              child: Icon(Icons.bar_chart),
             ),
-            label: "Profile",
+            label: "Analysis",
           ),
         ],
       ),

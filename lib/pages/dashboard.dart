@@ -18,7 +18,7 @@ class _DashboardState extends State<Dashboard> {
       'in_19': 2,
       'amount': 1200,
       'location': "Railways",
-      'hawker': "Ramji"
+      'hawker': "Ramji",
     },
     {
       'name': 'Anita Shah',
@@ -29,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
       'in_14': 3,
       'amount': 1800,
       'location': "Ratlam",
-      'hawker': "Premraj"
+      'hawker': "Premraj",
     },
     {
       'name': 'Mukesh Mehta',
@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
       'in_5': 2,
       'amount': 600,
       'location': "Bhilwara",
-      'hawker': "Ramji"
+      'hawker': "Ramji",
     },
     {
       'name': 'Kavita Joshi',
@@ -51,7 +51,7 @@ class _DashboardState extends State<Dashboard> {
       'in_14': 4,
       'amount': 2400,
       'location': "Railways",
-      'hawker': "Premraj"
+      'hawker': "Premraj",
     },
     {
       'name': 'Vikram Desai',
@@ -62,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
       'in_19': 1,
       'amount': 1200,
       'location': "Ratlam",
-      'hawker': "Dinesh"
+      'hawker': "Dinesh",
     },
   ];
 
@@ -92,12 +92,18 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 SizedBox(height: 4),
                 Text("OUT:"),
-                entry.containsKey('out_14')?
-                Text("14 KG - ${entry['out_14']}"): entry.containsKey('out_19')?Text("19 KG - ${entry['out_19']}") : Text("5 KG - ${entry['out_5']}"),
+                entry.containsKey('out_14')
+                    ? Text("14 KG - ${entry['out_14']}")
+                    : entry.containsKey('out_19')
+                    ? Text("19 KG - ${entry['out_19']}")
+                    : Text("5 KG - ${entry['out_5']}"),
                 SizedBox(height: 4),
                 Text("IN:"),
-                entry.containsKey('in_14')?
-                Text("14 KG - ${entry['in_14']}"): entry.containsKey('in_19')?Text("19 KG - ${entry['in_19']}") : Text("5 KG - ${entry['in_5']}"),
+                entry.containsKey('in_14')
+                    ? Text("14 KG - ${entry['in_14']}")
+                    : entry.containsKey('in_19')
+                    ? Text("19 KG - ${entry['in_19']}")
+                    : Text("5 KG - ${entry['in_5']}"),
                 SizedBox(height: 4),
                 Text(
                   "${entry['location']}",
@@ -145,8 +151,10 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
                 SizedBox(height: 8),
-                Text("${entry['hawker']}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  "${entry['hawker']}",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ],
             ),
           ],
@@ -164,10 +172,20 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(
-          "${_pages[_currentIndex]}",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        leading: GestureDetector(
+          onTap: () {
+            
+          },
+          child: Container(
+            margin: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(width: 2),
+            ),
+            child: Icon(Icons.person, size: 24,),
+          ),
         ),
+        title: Text("Dashboard", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -550,7 +568,7 @@ class _DashboardState extends State<Dashboard> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.green
+                                    color: Colors.green,
                                   ),
                                 ),
                               ],
@@ -569,7 +587,7 @@ class _DashboardState extends State<Dashboard> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.red
+                                    color: Colors.red,
                                   ),
                                 ),
                               ],

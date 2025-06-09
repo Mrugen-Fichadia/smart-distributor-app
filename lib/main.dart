@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/pages/auth.dart'; // Assuming your AuthScreen file is here
+import 'package:smart_distributor_app/pages/auth.dart';
 import 'dart:async';
-// ignore: unused_import
-import 'package:smart_distributor_app/pages/home.dart'; // This import is kept as it might be used elsewhere
+import 'package:smart_distributor_app/pages/home.dart';
 
 void main() {
   runApp(const MyApp());
