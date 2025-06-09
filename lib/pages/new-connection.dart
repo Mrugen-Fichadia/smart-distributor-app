@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_distributor_app/pages/tv-in-out.dart'; // Make sure this import is correct
+import 'package:smart_distributor_app/pages/tv-in-out.dart';
 
 void main() {
   runApp(const NewConnectionApp());

@@ -10,7 +10,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<Map<String, dynamic>> deliveryHistory = [
     {
       'name': 'Ramesh Patel',
@@ -76,9 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("${entry['time']}"),
-                  ],
+                  children: [Text("${entry['time']}")],
                 ),
                 Text("Cylinders: ${entry['cylinders']}"),
                 SizedBox(height: 4),
@@ -113,21 +110,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 SizedBox(height: 4),
-                
               ],
             ),
             Column(
               children: [
-                Text(
-                  "Amount",
-                  style: TextStyle(fontWeight: FontWeight.normal),
-                ),
+                Text("Amount", style: TextStyle(fontWeight: FontWeight.normal)),
                 Text(
                   "₹${entry['amount']}",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -136,24 +129,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentIndex = 0;
 
-  final List _pages = [
-    "Dashboard",
-    "Stock",
-    "Add Load",
-    "Delivery",
-    "Profile",
-  ];
+  final List _pages = ["Dashboard", "Stock", "Add Load", "Delivery", "Profile"];
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: [
-          Dashboard(),
-          Tools(),
-        ],
+        children: [Dashboard(), Tools()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

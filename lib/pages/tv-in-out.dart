@@ -108,7 +108,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                       });
                     },
                     activeColor:
-                        _primaryColor, // Use primary color for active radio button
+                        _primaryColor,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(

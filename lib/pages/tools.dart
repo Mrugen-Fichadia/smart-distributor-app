@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/pages/quick_customer.dart';
+import 'package:smart_distributor_app/pages/tv-in-out.dart';
 
 class Tools extends StatefulWidget {
   const Tools({super.key});
@@ -11,13 +13,13 @@ class _ToolsState extends State<Tools> {
   final List<Map<String, dynamic>> tools = [
     {"title": "Add Customer", "icon": Icons.person_add},
     {"title": "Add Stock", "icon": null},
-    {"title": "Quick Customer", "icon": null},
+    {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
     {"title": "Daily Report", "icon": Icons.today},
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},
     {"title": "Add Hawker", "icon": Icons.delivery_dining},
     {"title": "Distribution Center", "icon": Icons.location_city},
     {"title": "Payment Status", "icon": Icons.payment},
-    {"title": "TV In/Out", "icon": null},
+    {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
     {"title": "HosePipe In/Out", "icon": null},
     {"title": "DRP In/Out", "icon": null},
     {"title": "HotPlate In/Out", "icon": null},
@@ -51,8 +53,11 @@ class _ToolsState extends State<Tools> {
           childAspectRatio: 1,
           children: tools
               .map(
-                (tool) =>
-                    ToolCard(title: tool['title'], iconData: tool['icon']),
+                (tool) => ToolCard(
+                  title: tool['title'],
+                  iconData: tool['icon'],
+                  page: tool['page'],
+                ),
               )
               .toList(),
         ),
@@ -64,8 +69,9 @@ class _ToolsState extends State<Tools> {
 class ToolCard extends StatelessWidget {
   final String title;
   final IconData? iconData;
+  final Widget? page;
 
-  const ToolCard({required this.title, this.iconData});
+  const ToolCard({required this.title, this.iconData, this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +80,12 @@ class ToolCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
-          // Handle action or navigation
+          if (page != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page!),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -108,7 +119,8 @@ class ToolCard extends StatelessWidget {
                         "assets/images/quick_customer.png",
                         color: Colors.deepPurple,
                         height: 35,
-                      ) : title == "Add Stock"
+                      )
+                    : title == "Add Stock"
                     ? Image.asset(
                         "assets/images/add_stock.png",
                         color: Colors.deepPurple,
