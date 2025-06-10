@@ -49,16 +49,19 @@ class _EditDistributionCenterPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Edit Distribution Center',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          "Edit Distribution Center",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.white),
+            icon: const Icon(Icons.delete, color: primary),
             onPressed: _deleteDistributionCenter,
           ),
         ],
@@ -67,7 +70,6 @@ class _EditDistributionCenterPageState
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-            color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -94,7 +96,7 @@ class _EditDistributionCenterPageState
                     PrimaryButton(
                       text: "Update Distribution Center",
                       onPressed: _updateDistributionCenter,
-                      backgroundColor: const Color(0xFFDC2626),
+                      backgroundColor: primary,
                     ),
                   ],
                 ),

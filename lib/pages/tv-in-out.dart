@@ -55,7 +55,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                     'Tv In/Out',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w600,
-                      fontSize: 22,
+                      fontSize: 20,
                       color: Colors.black,
                     ),
                   ),

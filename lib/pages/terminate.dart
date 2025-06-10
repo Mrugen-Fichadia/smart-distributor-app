@@ -102,7 +102,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'Terminate Connection',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

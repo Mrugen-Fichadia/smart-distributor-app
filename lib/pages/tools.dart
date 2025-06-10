@@ -17,6 +17,7 @@ class _ToolsState extends State<Tools> {
   final List<Map<String, dynamic>> tools = [
     {"title": "Add Customer", "icon": Icons.person_add},
     {"title": "Edit Rates", "icon": null, "page": CylinderRatePage()},
+    {"title": "Add Stock", "icon": null},
     {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
     {"title": "Daily Report", "icon": Icons.today},
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},
@@ -26,12 +27,21 @@ class _ToolsState extends State<Tools> {
       "page": HawkerListPage(),
     },
     {"title": "Distribution Center", "icon": Icons.location_city, "page": DistributionCenterListPage()},
+    {
+      "title": "Add Worker",
+      "icon": null,
+    },
+    {
+      "title": "Add Manager",
+      "icon": null,
+    },
     {"title": "Payment Status", "icon": Icons.payment},
+    {"title": "Customer Delivery", "icon": Icons.payment},
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
-    {"title": "HosePipe In/Out", "icon": null},
-    {"title": "DRP In/Out", "icon": null},
-    {"title": "HotPlate In/Out", "icon": null},
-    {"title": "Delivery Details", "icon": Icons.local_shipping},
+    {"title": "HosePipe Delivery", "icon": null},
+    {"title": "DRP Delivery", "icon": null},
+    {"title": "HotPlate Delivery", "icon": null},
+    {"title": "Dispatch/ Return Log", "icon": Icons.local_shipping},
   ];
 
   @override
@@ -50,7 +60,7 @@ class _ToolsState extends State<Tools> {
             child: Icon(Icons.person, size: 24),
           ),
         ),
-        title: Text("Tools", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("Tools", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -110,13 +120,13 @@ class ToolCard extends StatelessWidget {
                         color: primary,
                         height: 35,
                       )
-                    : title == "HosePipe In/Out"
+                    : title == "HosePipe Delivery"
                     ? Image.asset(
                         "assets/images/plumbing.png",
                         color: primary,
                         height: 35,
                       )
-                    : title == "DRP In/Out"
+                    : title == "DRP Delivery"
                     ? Image.asset(
                         "assets/images/regulator.png",
                         color: primary,
@@ -132,6 +142,22 @@ class ToolCard extends StatelessWidget {
                     ? Image.asset(
                         "assets/images/rates.png",
                         color: primary,
+                        height: 35,
+                      )
+                    : title == "Add Stock"
+                    ? Image.asset(
+                        "assets/images/add_stock.png",
+                        color: primary,
+                        height: 35,
+                      )
+                    : title == "Add Manager"
+                    ? Image.asset(
+                        "assets/images/manager.png",
+                        height: 35,
+                      )
+                    : title == "Add Worker"
+                    ? Image.asset(
+                        "assets/images/worker.png",
                         height: 35,
                       )
                     : Image.asset(

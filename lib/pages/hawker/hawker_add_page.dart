@@ -54,19 +54,21 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Add New Hawker',
-        centerTitle: true,
-        onLeadingPressed: () => Get.back(),
-  // --------leading default back icon with white color -------------
-        // leading: 
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          "Add New Hawker",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-            color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -123,8 +125,8 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
                     PrimaryButton(
                       text: "Add Hawker",
                       onPressed: _saveHawker,
-                      backgroundColor: const Color(0xFFDC2626),
-                      textColor: Colors.white,
+                      backgroundColor: primary,
+                      textColor: offwhite,
                       borderRadius: 12.0,
                       height: 46.0,
                     ),

@@ -185,7 +185,7 @@ class _DashboardState extends State<Dashboard> {
             child: Icon(Icons.person, size: 24,),
           ),
         ),
-        title: Text("Dashboard", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("Dashboard", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         child: Center(

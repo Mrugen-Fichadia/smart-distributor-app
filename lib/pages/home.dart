@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/dashboard.dart';
 import 'package:smart_distributor_app/pages/tools.dart';
 
@@ -140,8 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: Color.fromRGBO(217, 50, 14, 1),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: primary,
+        unselectedItemColor: Colors.grey[600],
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
@@ -162,20 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Icon(Icons.build),
             ),
             label: "Tools",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.add_box),
-            ),
-            label: "Add Load",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.local_shipping),
-            ),
-            label: "Delivery",
           ),
           BottomNavigationBarItem(
             icon: Padding(

@@ -64,8 +64,6 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-  // ------------ container color from color palete----------//
-            color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -92,8 +90,8 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
                     PrimaryButton(
                       text: "Add Distribution Center",
                       onPressed: _saveDistributionCenter,
-                      backgroundColor: const Color(0xFFDC2626),
-                      textColor: Colors.white,
+                      backgroundColor: primary,
+                      textColor: offwhite,
                       borderRadius: 12.0,
                       height: 46.0,
                     ),

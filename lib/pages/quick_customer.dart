@@ -68,7 +68,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
         title: Text(
           'Quick Customer',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold, // Make title bolder
             color: Colors.black,
           ),

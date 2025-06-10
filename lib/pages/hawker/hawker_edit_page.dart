@@ -60,25 +60,22 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Edit Hawker',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.white),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+        title: Text("Edit Hawker", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        actions: [IconButton(
+            icon: const Icon(Icons.delete, color: primary),
             onPressed: _deleteHawkerInfo,
-          ),
-        ],
+          ),],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-            color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -135,7 +132,7 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                     PrimaryButton(
                       text: "Update Hawker",
                       onPressed: _updateHawker,
-                      backgroundColor: const Color(0xFFDC2626),
+                      backgroundColor: primary,
                     ),
                   ],
                 ),

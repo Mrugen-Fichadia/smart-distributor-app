@@ -135,7 +135,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
         title: Text(
           'Cylinder Rate Change',
           style: GoogleFonts.poppins(
-            fontSize: 24, // Slightly larger title
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
@@ -158,8 +158,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
                   CrossAxisAlignment.stretch, // Stretch children horizontally
               children: [
                 Card(
-                  elevation: 8, // More pronounced card elevation
-                  color: cardBackgroundColor, // Apply card background color
+                  elevation: 8,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       20,

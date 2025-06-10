@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -18,7 +19,7 @@ class PrimaryButton extends StatelessWidget {
 // --------------- app color palete ---------------//
     this.backgroundColor =const  Color(0xFFDC2626),
     this.disabledColor = const Color(0xFFDC2626), 
-    this.textColor = Colors.white,
+    this.textColor = offwhite,
     this.borderRadius = 18.0,
     this.width,
     this.height = 48.0,
