@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/language_provider.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/language_controller.dart';
 import 'package:smart_distributor_app/ml_translation_service.dart';
 import 'package:smart_distributor_app/localized_text.dart';
 import 'package:smart_distributor_app/app_colours.dart';
 import 'package:smart_distributor_app/language_service.dart';
 import 'home.dart';
-import 'package:provider/provider.dart';
 
 class EnhancedLanguageSelectionScreen extends StatefulWidget {
   final bool isFromSettings;
@@ -61,8 +61,8 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
   }
 
   void _loadLanguageStatus() async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-    _selectedLanguage = languageProvider.currentLanguage;
+    final languageController = Get.find<LanguageController>();
+    _selectedLanguage = languageController.currentLanguage;
 
     // Check download status for all languages
     for (var language in MLTranslationService.supportedLanguages) {
@@ -72,7 +72,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
         continue;
       }
 
-      final isDownloaded = await languageProvider.isLanguageDownloaded(code);
+      final isDownloaded = await languageController.isLanguageDownloaded(code);
       setState(() {
         _downloadStatus[code] = isDownloaded;
       });
@@ -139,7 +139,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
               ),
             ],
           ),
-          child: Icon(
+          child: const Icon(
             Icons.translate,
             size: 60,
             color: AppColors.primaryMaroon,
@@ -172,7 +172,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
     return Row(
       children: [
         IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Get.back(),
           icon: const Icon(
             Icons.arrow_back,
             color: AppColors.primaryMaroon,
@@ -295,7 +295,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
                     LinearProgressIndicator(
                       value: downloadProgress,
                       backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryMaroon),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryMaroon),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ],
@@ -305,7 +305,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
                   ? Container(
                 width: 28,
                 height: 28,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primaryMaroon,
                   shape: BoxShape.circle,
                 ),
@@ -366,7 +366,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
   }
 
   Future<void> _downloadLanguageModel(String languageCode) async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageController = Get.find<LanguageController>();
 
     setState(() {
       _downloadProgress[languageCode] = 0.1;
@@ -381,7 +381,7 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
         });
       }
 
-      final success = await languageProvider.downloadLanguageModel(languageCode);
+      final success = await languageController.downloadLanguageModel(languageCode);
 
       setState(() {
         _downloadStatus[languageCode] = success;
@@ -389,18 +389,11 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
       });
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Language model downloaded successfully',
-              style: TextStyle(fontFamily: 'Poppins'),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        Get.snackbar(
+          'Success',
+          'Language model downloaded successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
@@ -408,18 +401,11 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
         _downloadProgress[languageCode] = 0.0;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Failed to download language model',
-            style: TextStyle(fontFamily: 'Poppins'),
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+      Get.snackbar(
+        'Error',
+        'Failed to download language model',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }
@@ -430,36 +416,25 @@ class _EnhancedLanguageSelectionScreenState extends State<EnhancedLanguageSelect
   }
 
   void _onContinuePressed() async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageController = Get.find<LanguageController>();
 
     // Change language
-    await languageProvider.changeLanguage(_selectedLanguage);
+    await languageController.changeLanguage(_selectedLanguage);
 
     if (!widget.isFromSettings) {
       // Mark first launch as completed
       await LanguageService.setFirstLaunchCompleted();
 
       // Navigate to home screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyHomePage(
-
-          ),
-        ),
-      );
+      Get.offAll(() => const MyHomePage());
     } else {
       // Return to previous screen with success message
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const LocalizedText(text: 'Language changed successfully'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+      Get.back();
+      Get.snackbar(
+        'Success',
+        'Language changed successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
       );
     }
   }

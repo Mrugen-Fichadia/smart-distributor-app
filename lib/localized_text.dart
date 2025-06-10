@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'ml_translation_service.dart';
-import 'language_provider.dart';
+import 'language_controller.dart';
 import 'app_colours.dart';
-import 'package:provider/provider.dart';
 
 class LocalizedText extends StatefulWidget {
   final String text;
@@ -43,10 +43,10 @@ class _LocalizedTextState extends State<LocalizedText> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final languageProvider = Provider.of<LanguageProvider>(context);
+    final languageController = Get.find<LanguageController>();
 
-    if (languageProvider.isInitialized) {
-      _currentLanguage = languageProvider.currentLanguage;
+    if (languageController.isInitialized) {
+      _currentLanguage = languageController.currentLanguage;
       _translateText();
     }
   }
@@ -54,8 +54,8 @@ class _LocalizedTextState extends State<LocalizedText> {
   @override
   void didUpdateWidget(LocalizedText oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-    final newLanguage = languageProvider.currentLanguage;
+    final languageController = Get.find<LanguageController>();
+    final newLanguage = languageController.currentLanguage;
 
     if (oldWidget.text != widget.text || _currentLanguage != newLanguage) {
       _currentLanguage = newLanguage;
@@ -105,7 +105,7 @@ class _LocalizedTextState extends State<LocalizedText> {
     final textToShow = _isLoading ? widget.text : (_translatedText ?? widget.text);
 
     // Default text style with app colors
-    final TextStyle defaultStyle = TextStyle(
+    const TextStyle defaultStyle = TextStyle(
       color: AppColors.darkGray,
       fontFamily: 'Poppins',
     );
@@ -128,7 +128,7 @@ class _LocalizedTextState extends State<LocalizedText> {
             softWrap: widget.softWrap,
           ),
           const SizedBox(width: 8),
-          SizedBox(
+          const SizedBox(
             width: 12,
             height: 12,
             child: CircularProgressIndicator(

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/app_colours.dart';
+import 'package:smart_distributor_app/localized_text.dart';
 import 'delivery_detail_screen.dart';
 import 'new_delivery_screen.dart';
 
@@ -35,8 +38,8 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Deliveries',
+        title: const LocalizedText(
+          text: 'Deliveries',
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -45,11 +48,62 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.snackbar(
+                'Info',
+                'Filter feature coming soon!',
+                backgroundColor: AppColors.primaryMaroon,
+                colorText: Colors.white,
+              );
+            },
             icon: const Icon(Icons.filter_list),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.bottomSheet(
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const LocalizedText(
+                        text: 'More Options',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ListTile(
+                        leading: const Icon(Icons.file_download),
+                        title: const LocalizedText(text: 'Export Data'),
+                        onTap: () {
+                          Get.back();
+                          Get.snackbar(
+                            'Info',
+                            'Export feature coming soon!',
+                            backgroundColor: AppColors.primaryMaroon,
+                            colorText: Colors.white,
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.refresh),
+                        title: const LocalizedText(text: 'Refresh'),
+                        onTap: () {
+                          Get.back();
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
             icon: const Icon(Icons.more_vert),
           ),
         ],
@@ -92,9 +146,9 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
               const SizedBox(height: 16),
               TabBar(
                 controller: _tabController,
-                labelColor: Colors.blue[600],
+                labelColor: AppColors.primaryMaroon,
                 unselectedLabelColor: Colors.grey[600],
-                indicatorColor: Colors.blue[600],
+                indicatorColor: AppColors.primaryMaroon,
                 tabs: const [
                   Tab(text: 'All'),
                   Tab(text: 'Pending'),
@@ -117,16 +171,11 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NewDeliveryScreen(),
-            ),
-          );
+          Get.to(() => const NewDeliveryScreen());
         },
-        backgroundColor: Colors.blue[600],
+        backgroundColor: AppColors.primaryMaroon,
         icon: const Icon(Icons.add),
-        label: const Text('New Delivery'),
+        label: const LocalizedText(text: 'New Delivery'),
       ),
     );
   }
@@ -145,8 +194,8 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
               color: Colors.grey[400],
             ),
             const SizedBox(height: 16),
-            Text(
-              'No deliveries found',
+            LocalizedText(
+              text: 'No deliveries found',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -154,8 +203,8 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Create your first delivery to get started',
+            LocalizedText(
+              text: 'Create your first delivery to get started',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -281,12 +330,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
           ],
         ),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DeliveryDetailScreen(delivery: delivery),
-            ),
-          );
+          Get.to(() => DeliveryDetailScreen(delivery: delivery));
         },
       ),
     );
@@ -301,7 +345,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen>
       case 'cancelled':
         return Colors.red;
       case 'in progress':
-        return Colors.blue;
+        return AppColors.primaryMaroon;
       default:
         return Colors.grey;
     }

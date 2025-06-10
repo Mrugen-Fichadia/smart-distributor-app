@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/app_colours.dart';
+import 'package:smart_distributor_app/localized_text.dart';
 
 class CustomerOrdersScreen extends StatefulWidget {
   const CustomerOrdersScreen({super.key});
@@ -33,8 +36,8 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Customer Orders',
+        title: const LocalizedText(
+          text: 'Customer Orders',
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -43,7 +46,14 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.snackbar(
+                'Info',
+                'Filter feature coming soon!',
+                backgroundColor: AppColors.primaryMaroon,
+                colorText: Colors.white,
+              );
+            },
             icon: const Icon(Icons.filter_list),
           ),
         ],
@@ -86,9 +96,9 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
               const SizedBox(height: 16),
               TabBar(
                 controller: _tabController,
-                labelColor: Colors.blue[600],
+                labelColor: AppColors.primaryMaroon,
                 unselectedLabelColor: Colors.grey[600],
-                indicatorColor: Colors.blue[600],
+                indicatorColor: AppColors.primaryMaroon,
                 tabs: const [
                   Tab(text: 'All Orders'),
                   Tab(text: 'Regular Customers'),
@@ -111,9 +121,9 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
         onPressed: () {
           _showAddCustomerDialog();
         },
-        backgroundColor: Colors.blue[600],
+        backgroundColor: AppColors.primaryMaroon,
         icon: const Icon(Icons.person_add),
-        label: const Text('Add Customer'),
+        label: const LocalizedText(text: 'Add Customer'),
       ),
     );
   }
@@ -132,8 +142,8 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
               color: Colors.grey[400],
             ),
             const SizedBox(height: 16),
-            Text(
-              'No orders found',
+            LocalizedText(
+              text: 'No orders found',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -171,11 +181,11 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
       ),
       child: ExpansionTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.blue[100],
+          backgroundColor: AppColors.primaryMaroon.withOpacity(0.1),
           child: Text(
             order['customerName'][0].toUpperCase(),
             style: TextStyle(
-              color: Colors.blue[600],
+              color: AppColors.primaryMaroon,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -207,8 +217,8 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
                     color: order['isRegular'] ? Colors.green[100] : Colors.orange[100],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    order['isRegular'] ? 'Regular' : 'New',
+                  child: LocalizedText(
+                    text: order['isRegular'] ? 'Regular' : 'New',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
@@ -234,8 +244,8 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Recent Orders',
+                const LocalizedText(
+                  text: 'Recent Orders',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -290,10 +300,10 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
                       child: OutlinedButton.icon(
                         onPressed: () => _callCustomer(order['phone']),
                         icon: const Icon(Icons.phone, size: 16),
-                        label: const Text('Call'),
+                        label: const LocalizedText(text: 'Call'),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.blue[600],
-                          side: BorderSide(color: Colors.blue[600]!),
+                          foregroundColor: AppColors.primaryMaroon,
+                          side: BorderSide(color: AppColors.primaryMaroon),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                       ),
@@ -303,9 +313,9 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
                       child: ElevatedButton.icon(
                         onPressed: () => _createNewOrder(order),
                         icon: const Icon(Icons.add, size: 16),
-                        label: const Text('New Order'),
+                        label: const LocalizedText(text: 'New Order'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[600],
+                          backgroundColor: AppColors.primaryMaroon,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
@@ -386,7 +396,6 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
           (type == 'regular' && isRegular) ||
           (type == 'new' && !isRegular);
 
-
       return matchesSearch && matchesType;
     }).toList();
 
@@ -395,39 +404,38 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
 
   void _callCustomer(String phone) {
     print('Calling customer: $phone');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Calling $phone...')),
+    Get.snackbar(
+      'Info',
+      'Calling $phone...',
+      backgroundColor: AppColors.primaryMaroon,
+      colorText: Colors.white,
     );
   }
 
   void _createNewOrder(Map<String, dynamic> customer) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('New Order for ${customer['customerName']}'),
-          content: const Text('Would you like to create a new delivery order for this customer?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Navigate to new delivery screen with pre-filled customer data
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Redirecting to new order form...'),
-                    backgroundColor: Colors.blue,
-                  ),
-                );
-              },
-              child: const Text('Create Order'),
-            ),
-          ],
-        );
-      },
+    Get.dialog(
+      AlertDialog(
+        title: LocalizedText(text: 'New Order for ${customer['customerName']}'),
+        content: const LocalizedText(text: 'Would you like to create a new delivery order for this customer?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const LocalizedText(text: 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              Get.snackbar(
+                'Success',
+                'Redirecting to new order form...',
+                backgroundColor: AppColors.primaryMaroon,
+                colorText: Colors.white,
+              );
+            },
+            child: const LocalizedText(text: 'Create Order'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -436,65 +444,62 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen>
     final phoneController = TextEditingController();
     final addressController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add New Customer'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Customer Name',
-                    prefixIcon: Icon(Icons.person),
-                  ),
+    Get.dialog(
+      AlertDialog(
+        title: const LocalizedText(text: 'Add New Customer'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Customer Name',
+                  prefixIcon: Icon(Icons.person),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number',
-                    prefixIcon: Icon(Icons.phone),
-                  ),
-                  keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  prefixIcon: Icon(Icons.phone),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: addressController,
-                  decoration: const InputDecoration(
-                    labelText: 'Address',
-                    prefixIcon: Icon(Icons.location_on),
-                  ),
-                  maxLines: 2,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: addressController,
+                decoration: const InputDecoration(
+                  labelText: 'Address',
+                  prefixIcon: Icon(Icons.location_on),
                 ),
-              ],
-            ),
+                maxLines: 2,
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty && phoneController.text.isNotEmpty) {
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Customer added successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-              },
-              child: const Text('Add Customer'),
-            ),
-          ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const LocalizedText(text: 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty && phoneController.text.isNotEmpty) {
+                Get.back();
+                Get.snackbar(
+                  'Success',
+                  'Customer added successfully!',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              }
+            },
+            child: const LocalizedText(text: 'Add Customer'),
+          ),
+        ],
+      ),
     );
   }
 }

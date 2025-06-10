@@ -1,34 +1,39 @@
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'language_service.dart';
 import 'ml_translation_service.dart';
 
-class LanguageProvider extends ChangeNotifier {
-  String _currentLanguage = 'en';
-  bool _isInitialized = false;
+class LanguageController extends GetxController {
+  final _currentLanguage = 'en'.obs;
+  final _isInitialized = false.obs;
   final MLTranslationService _translationService = MLTranslationService();
 
-  String get currentLanguage => _currentLanguage;
-  bool get isInitialized => _isInitialized;
+  String get currentLanguage => _currentLanguage.value;
+  bool get isInitialized => _isInitialized.value;
 
-  // Initialize the provider
+  @override
+  void onInit() {
+    super.onInit();
+    initialize();
+  }
+
+  // Initialize the controller
   Future<void> initialize() async {
-    if (_isInitialized) return;
+    if (_isInitialized.value) return;
 
     // Load saved language
-    _currentLanguage = await LanguageService.getSavedLanguage();
+    _currentLanguage.value = await LanguageService.getSavedLanguage();
 
     // Initialize ML translation service
     await _translationService.initialize();
 
-    _isInitialized = true;
-    notifyListeners();
+    _isInitialized.value = true;
   }
 
   // Change language
   Future<void> changeLanguage(String languageCode) async {
-    if (_currentLanguage == languageCode) return;
+    if (_currentLanguage.value == languageCode) return;
 
-    _currentLanguage = languageCode;
+    _currentLanguage.value = languageCode;
 
     // Save to preferences
     await LanguageService.saveLanguage(languageCode);
@@ -40,8 +45,6 @@ class LanguageProvider extends ChangeNotifier {
         await _translationService.downloadLanguageModel(languageCode);
       }
     }
-
-    notifyListeners();
   }
 
   // Get language info
@@ -72,10 +75,9 @@ class LanguageProvider extends ChangeNotifier {
   Future<bool> downloadLanguageModel(String languageCode) async {
     try {
       final result = await _translationService.downloadLanguageModel(languageCode);
-      notifyListeners();
       return result;
     } catch (e) {
-      debugPrint('Error downloading language model: $e');
+      print('Error downloading language model: $e');
       return false;
     }
   }
@@ -84,10 +86,9 @@ class LanguageProvider extends ChangeNotifier {
   Future<bool> deleteLanguageModel(String languageCode) async {
     try {
       final result = await _translationService.deleteLanguageModel(languageCode);
-      notifyListeners();
       return result;
     } catch (e) {
-      debugPrint('Error deleting language model: $e');
+      print('Error deleting language model: $e');
       return false;
     }
   }

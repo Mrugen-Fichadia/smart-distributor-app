@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/app_colours.dart'; // Import AppColors
-
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/app_colours.dart';
 
 class NewDeliveryScreen extends StatefulWidget {
   const NewDeliveryScreen({super.key});
@@ -121,7 +121,6 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
             decoration: const InputDecoration(
               labelText: 'Customer Name *',
               prefixIcon: Icon(Icons.person_outline),
-
             ),
             style: const TextStyle(color: Colors.black),
             validator: (value) {
@@ -143,8 +142,7 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter phone number';
-              }
-              else if(value.length!=10){
+              } else if (value.length != 10) {
                 return 'Please enter 10 digits phone number';
               }
               return null;
@@ -342,8 +340,8 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
           const SizedBox(height: 16),
           Theme(
             data: Theme.of(context).copyWith(
-              splashColor: Colors.white, // White background on tap
-              highlightColor: Colors.white, // White background for highlight
+              splashColor: Colors.white,
+              highlightColor: Colors.white,
             ),
             child: ListTile(
               leading: const Icon(Icons.calendar_month_sharp),
@@ -351,7 +349,7 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
               subtitle: Text(
                 '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                 style: const TextStyle(
-                  color: AppColors.primaryMaroon, // Maroon color for date text
+                  color: AppColors.primaryMaroon,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -361,8 +359,8 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
           const Divider(),
           Theme(
             data: Theme.of(context).copyWith(
-              splashColor: Colors.white, // White background on tap
-              highlightColor: Colors.white, // White background for highlight
+              splashColor: Colors.white,
+              highlightColor: Colors.white,
             ),
             child: ListTile(
               leading: const Icon(Icons.access_time),
@@ -370,7 +368,7 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
               subtitle: Text(
                 _selectedTime.format(context),
                 style: const TextStyle(
-                  color: AppColors.primaryMaroon, // Maroon color for time text
+                  color: AppColors.primaryMaroon,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -502,8 +500,11 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
   }
 
   String _calculateTotal() {
-    int pricePerCylinder = _selectedCylinderType == '14.2 KG' ? 950 :
-    _selectedCylinderType == '5 KG' ? 450 : 1200;
+    int pricePerCylinder = _selectedCylinderType == '14.2 KG'
+        ? 950
+        : _selectedCylinderType == '5 KG'
+        ? 450
+        : 1200;
     return (_cylinderQuantity * pricePerCylinder).toString();
   }
 
@@ -564,11 +565,11 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
   void _saveDelivery() {
     if (_formKey.currentState!.validate()) {
       // Save as draft
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Delivery saved as draft'),
-          backgroundColor: Colors.orange,
-        ),
+      Get.snackbar(
+        'Success',
+        'Delivery saved as draft',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
       );
     }
   }
@@ -576,34 +577,31 @@ class _NewDeliveryScreenState extends State<NewDeliveryScreen> {
   void _createDelivery() {
     if (_formKey.currentState!.validate()) {
       // Create delivery
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            title: const Text('Create Delivery'),
-            content: const Text('Are you sure you want to create this delivery?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Delivery created successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
-                child: const Text('Create'),
-              ),
-            ],
-          );
-        },
+      Get.dialog(
+        AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text('Create Delivery'),
+          content: const Text('Are you sure you want to create this delivery?'),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.back();
+                Get.back();
+                Get.snackbar(
+                  'Success',
+                  'Delivery created successfully!',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        ),
       );
     }
   }

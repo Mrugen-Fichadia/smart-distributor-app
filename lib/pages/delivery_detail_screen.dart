@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/app_colours.dart';
+import 'package:smart_distributor_app/localized_text.dart';
 
 class DeliveryDetailScreen extends StatelessWidget {
   final Map<String, dynamic> delivery;
@@ -12,8 +15,8 @@ class DeliveryDetailScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Delivery Details',
+        title: const LocalizedText(
+          text: 'Delivery Details',
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -22,7 +25,7 @@ class DeliveryDetailScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           IconButton(
-            onPressed: () => _showMoreOptions(context),
+            onPressed: () => _showMoreOptions(),
             icon: const Icon(Icons.more_vert),
           ),
         ],
@@ -42,7 +45,7 @@ class DeliveryDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildPaymentInfo(),
             const SizedBox(height: 24),
-            _buildActionButtons(context),
+            _buildActionButtons(),
           ],
         ),
       ),
@@ -118,8 +121,8 @@ class DeliveryDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Customer Information',
+          const LocalizedText(
+            text: 'Customer Information',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -154,8 +157,8 @@ class DeliveryDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Order Details',
+          const LocalizedText(
+            text: 'Order Details',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -190,8 +193,8 @@ class DeliveryDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Delivery Information',
+          const LocalizedText(
+            text: 'Delivery Information',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -226,8 +229,8 @@ class DeliveryDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Payment Information',
+          const LocalizedText(
+            text: 'Payment Information',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -238,8 +241,8 @@ class DeliveryDetailScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Subtotal',
+              const LocalizedText(
+                text: 'Subtotal',
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               Text(
@@ -252,12 +255,12 @@ class DeliveryDetailScreen extends StatelessWidget {
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Delivery Charges',
+              LocalizedText(
+                text: 'Delivery Charges',
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
-              Text(
-                'Free',
+              LocalizedText(
+                text: 'Free',
                 style: TextStyle(fontSize: 14, color: Colors.green),
               ),
             ],
@@ -266,8 +269,8 @@ class DeliveryDetailScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Total Amount',
+              const LocalizedText(
+                text: 'Total Amount',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -302,8 +305,8 @@ class DeliveryDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
+              LocalizedText(
+                text: label,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
@@ -325,24 +328,24 @@ class DeliveryDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons() {
     return Column(
       children: [
         if (delivery['status'].toLowerCase() == 'pending') ...[
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _updateDeliveryStatus(context, 'In Progress'),
+              onPressed: () => _updateDeliveryStatus('In Progress'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[600],
+                backgroundColor: AppColors.primaryMaroon,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Start Delivery',
+              child: const LocalizedText(
+                text: 'Start Delivery',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -354,7 +357,7 @@ class DeliveryDetailScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: () => _updateDeliveryStatus(context, 'Cancelled'),
+              onPressed: () => _updateDeliveryStatus('Cancelled'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
@@ -363,8 +366,8 @@ class DeliveryDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Cancel Delivery',
+              child: const LocalizedText(
+                text: 'Cancel Delivery',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -376,7 +379,7 @@ class DeliveryDetailScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _updateDeliveryStatus(context, 'Completed'),
+              onPressed: () => _updateDeliveryStatus('Completed'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[600],
                 foregroundColor: Colors.white,
@@ -385,8 +388,8 @@ class DeliveryDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Mark as Completed',
+              child: const LocalizedText(
+                text: 'Mark as Completed',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -402,10 +405,10 @@ class DeliveryDetailScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _callCustomer(),
                 icon: const Icon(Icons.phone),
-                label: const Text('Call'),
+                label: const LocalizedText(text: 'Call'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.blue[600],
-                  side: BorderSide(color: Colors.blue[600]!),
+                  foregroundColor: AppColors.primaryMaroon,
+                  side: BorderSide(color: AppColors.primaryMaroon),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -418,10 +421,10 @@ class DeliveryDetailScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _openMap(),
                 icon: const Icon(Icons.directions),
-                label: const Text('Directions'),
+                label: const LocalizedText(text: 'Directions'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.blue[600],
-                  side: BorderSide(color: Colors.blue[600]!),
+                  foregroundColor: AppColors.primaryMaroon,
+                  side: BorderSide(color: AppColors.primaryMaroon),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -444,7 +447,7 @@ class DeliveryDetailScreen extends StatelessWidget {
       case 'cancelled':
         return Colors.red;
       case 'in progress':
-        return Colors.blue;
+        return AppColors.primaryMaroon;
       default:
         return Colors.grey;
     }
@@ -465,83 +468,125 @@ class DeliveryDetailScreen extends StatelessWidget {
     }
   }
 
-  void _updateDeliveryStatus(BuildContext context, String newStatus) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update Status'),
-          content: Text('Are you sure you want to mark this delivery as $newStatus?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Delivery status updated to $newStatus'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              child: const Text('Confirm'),
-            ),
-          ],
-        );
-      },
+  void _updateDeliveryStatus(String newStatus) {
+    Get.dialog(
+      AlertDialog(
+        title: const LocalizedText(text: 'Update Status'),
+        content: LocalizedText(text: 'Are you sure you want to mark this delivery as $newStatus?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const LocalizedText(text: 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              Get.snackbar(
+                'Success',
+                'Delivery status updated to $newStatus',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            },
+            child: const LocalizedText(text: 'Confirm'),
+          ),
+        ],
+      ),
     );
   }
 
   void _callCustomer() {
     // Implement phone call functionality
     print('Calling customer: ${delivery['phone']}');
+    Get.snackbar(
+      'Info',
+      'Calling ${delivery['phone']}...',
+      backgroundColor: AppColors.primaryMaroon,
+      colorText: Colors.white,
+    );
   }
 
   void _openMap() {
     // Implement map navigation functionality
     print('Opening map for address: ${delivery['address']}');
+    Get.snackbar(
+      'Info',
+      'Opening directions...',
+      backgroundColor: AppColors.primaryMaroon,
+      colorText: Colors.white,
+    );
   }
 
-  void _showMoreOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('Edit Delivery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Navigate to edit screen
-                },
+  void _showMoreOptions() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
-              ListTile(
-                leading: const Icon(Icons.share),
-                title: const Text('Share Details'),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Implement share functionality
-                },
+            ),
+            const SizedBox(height: 20),
+            const LocalizedText(
+              text: 'More Options',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              ListTile(
-                leading: const Icon(Icons.print),
-                title: const Text('Print Receipt'),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Implement print functionality
-                },
-              ),
-            ],
-          ),
-        );
-      },
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const LocalizedText(text: 'Edit Delivery'),
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'Info',
+                  'Edit feature coming soon!',
+                  backgroundColor: AppColors.primaryMaroon,
+                  colorText: Colors.white,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const LocalizedText(text: 'Share Details'),
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'Info',
+                  'Share feature coming soon!',
+                  backgroundColor: AppColors.primaryMaroon,
+                  colorText: Colors.white,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.print),
+              title: const LocalizedText(text: 'Print Receipt'),
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'Info',
+                  'Print feature coming soon!',
+                  backgroundColor: AppColors.primaryMaroon,
+                  colorText: Colors.white,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

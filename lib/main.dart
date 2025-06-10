@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'pages/registration_language_screen.dart';
-import 'pages//enhanced_language_selection_screen.dart';
-import '/language_provider.dart';
-import '/language_service.dart';
-import '/app_colours.dart';
-import '/localized_text.dart';
+import 'pages/enhanced_language_selection_screen.dart';
+import 'language_controller.dart';
+import 'language_service.dart';
+import 'app_colours.dart';
+import 'localized_text.dart';
 import 'dart:async';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize GetX dependencies
+  Get.put(LanguageController());
+
   runApp(const MyApp());
 }
 
@@ -19,71 +23,64 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => LanguageProvider(),
-      child: Consumer<LanguageProvider>(
-        builder: (context, languageProvider, child) {
-          return MaterialApp(
-            title: 'Smart Distributor App',
-            theme: ThemeData(
-              primaryColor: AppColors.primaryMaroon,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: AppColors.primaryMaroon,
-                primary: AppColors.primaryMaroon,
-                secondary: AppColors.lightMaroon,
-                background: AppColors.offWhite,
-              ),
-              scaffoldBackgroundColor: Colors.white,
-              textTheme: GoogleFonts.poppinsTextTheme(
-                Theme.of(context).textTheme.apply(
-                  bodyColor: AppColors.darkGray,
-                  displayColor: AppColors.darkGray,
-                ),
-              ),
-              inputDecorationTheme: InputDecorationTheme(
-                labelStyle: TextStyle(
-                  color: AppColors.darkGray,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey[300]!,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey[300]!,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide(
-                    color: AppColors.primaryMaroon,
-                    width: 2.0,
-                  ),
-                ),
-                contentPadding:
-                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              ),
-              elevatedButtonTheme: ElevatedButtonThemeData(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryMaroon,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-              ),
+    return GetMaterialApp(
+      title: 'Smart Distributor App',
+      theme: ThemeData(
+        primaryColor: AppColors.primaryMaroon,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primaryMaroon,
+          primary: AppColors.primaryMaroon,
+          secondary: AppColors.lightMaroon,
+          background: AppColors.offWhite,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme.apply(
+            bodyColor: AppColors.darkGray,
+            displayColor: AppColors.darkGray,
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: const TextStyle(
+            color: AppColors.darkGray,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(
+              color: Colors.grey[300]!,
             ),
-            home: const SplashScreen(),
-            debugShowCheckedModeBanner: false,
-          );
-        },
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(
+              color: Colors.grey[300]!,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(
+              color: AppColors.primaryMaroon,
+              width: 2.0,
+            ),
+          ),
+          contentPadding:
+          const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryMaroon,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+        ),
       ),
+      home: const SplashScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -136,9 +133,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   void _initializeApp() async {
-    // Initialize language provider
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-    await languageProvider.initialize();
+    // Initialize language controller
+    final languageController = Get.find<LanguageController>();
+    await languageController.initialize();
 
     // Check if it's first launch
     final isFirstLaunch = await LanguageService.isFirstLaunch();
@@ -146,44 +143,25 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Timer(const Duration(seconds: 3), () {
       if (isFirstLaunch) {
         // Show registration language screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegistrationLanguageScreen(
-              onLanguageSelected: (language) {
-                // Navigate to auth screen after language selection
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegistrationLanguageScreen(
-                      onLanguageSelected: (selectedLanguage) {
-                        // Handle the selected language here
-                        print('Selected language: $selectedLanguage');
-
-                        // You can also update your app state or call setState here if needed
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      } else {
-        // Show auth screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegistrationLanguageScreen(
+        Get.off(() => RegistrationLanguageScreen(
+          onLanguageSelected: (language) {
+            // Navigate to auth screen after language selection
+            Get.off(() => RegistrationLanguageScreen(
               onLanguageSelected: (selectedLanguage) {
                 // Handle the selected language here
                 print('Selected language: $selectedLanguage');
-
-                // You can also update your app state or call setState here if needed
               },
-            ),
-          ),
-        );
+            ));
+          },
+        ));
+      } else {
+        // Show auth screen
+        Get.off(() => RegistrationLanguageScreen(
+          onLanguageSelected: (selectedLanguage) {
+            // Handle the selected language here
+            print('Selected language: $selectedLanguage');
+          },
+        ));
       }
     });
   }
@@ -218,10 +196,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0), // Adjust padding to fit the image nicely
+                        padding: const EdgeInsets.all(16.0),
                         child: Image.asset(
-                          'assets/images/logo.png', // Replace with your image path
-                          fit: BoxFit.contain, // Ensure the image fits within the container
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -244,7 +222,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                     ),
                     const SizedBox(height: 40),
-                    SizedBox(
+                    const SizedBox(
                       width: 40,
                       height: 40,
                       child: CircularProgressIndicator(
@@ -278,14 +256,9 @@ class AuthScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.language),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const EnhancedLanguageSelectionScreen(
-                    isFromSettings: true,
-                  ),
-                ),
-              );
+              Get.to(() => const EnhancedLanguageSelectionScreen(
+                isFromSettings: true,
+              ));
             },
           ),
         ],

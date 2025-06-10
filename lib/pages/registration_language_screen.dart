@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/language_provider.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/language_controller.dart';
 import 'package:smart_distributor_app/ml_translation_service.dart';
 import 'package:smart_distributor_app/localized_text.dart';
 import 'package:smart_distributor_app/app_colours.dart';
 import 'home.dart';
 import 'package:smart_distributor_app/language_service.dart';
-import 'package:provider/provider.dart';
 
 class RegistrationLanguageScreen extends StatefulWidget {
   final Function(String) onLanguageSelected;
@@ -84,8 +84,8 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
   }
 
   void _loadLanguageStatus() async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-    _selectedLanguage = languageProvider.currentLanguage;
+    final languageController = Get.find<LanguageController>();
+    _selectedLanguage = languageController.currentLanguage;
 
     // Check download status for all languages
     for (var language in MLTranslationService.supportedLanguages) {
@@ -95,7 +95,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
         continue;
       }
 
-      final isDownloaded = await languageProvider.isLanguageDownloaded(code);
+      final isDownloaded = await languageController.isLanguageDownloaded(code);
       if (mounted) {
         setState(() {
           _downloadStatus[code] = isDownloaded;
@@ -181,16 +181,16 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16.0), // Adjust padding to fit the image nicely
+              padding: const EdgeInsets.all(16.0),
               child: Image.asset(
-                'assets/images/logo.png', // Replace with your image path
-                fit: BoxFit.contain, // Ensure the image fits within the container
+                'assets/images/logo.png',
+                fit: BoxFit.contain,
               ),
             ),
           ),
           const SizedBox(height: 40),
           const LocalizedText(
-            text:'Welcome to Smart Distributor',
+            text: 'Welcome to Smart Distributor',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -201,7 +201,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
           ),
           const SizedBox(height: 16),
           const LocalizedText(
-            text:'Let\'s start by selecting your preferred language',
+            text: 'Let\'s start by selecting your preferred language',
             style: TextStyle(
               fontSize: 16,
               color: AppColors.darkGray,
@@ -222,7 +222,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
         children: [
           const SizedBox(height: 20),
           const LocalizedText(
-           text: 'Choose Your Language',
+            text: 'Choose Your Language',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
           ),
           const SizedBox(height: 8),
           const LocalizedText(
-            text:  'Select the language you are most comfortable with',
+            text: 'Select the language you are most comfortable with',
             style: TextStyle(
               fontSize: 14,
               color: AppColors.darkGray,
@@ -519,18 +519,11 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
       _downloadingLanguage = '';
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const LocalizedText(
-          text:  'Download cancelled',
-          style: TextStyle(fontFamily: 'Poppins'),
-        ),
-        backgroundColor: Colors.orange,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+    Get.snackbar(
+      'Cancelled',
+      'Download cancelled',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
     );
   }
 
@@ -547,7 +540,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
   }
 
   Future<void> _downloadLanguageModel(String languageCode) async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageController = Get.find<LanguageController>();
 
     setState(() {
       _isDownloading = true;
@@ -556,7 +549,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
 
     try {
       // Perform the actual download
-      final success = await languageProvider.downloadLanguageModel(languageCode);
+      final success = await languageController.downloadLanguageModel(languageCode);
 
       // Update UI after download completes
       if (mounted) {
@@ -568,37 +561,23 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
       }
 
       if (success) {
-        // Update language in provider
-        await languageProvider.changeLanguage(languageCode);
+        // Update language in controller
+        await languageController.changeLanguage(languageCode);
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const LocalizedText(
-              text: 'Language downloaded successfully',
-              style: TextStyle(fontFamily: 'Poppins'),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        Get.snackbar(
+          'Success',
+          'Language downloaded successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
       } else {
         // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const LocalizedText(
-              text:  'Failed to download language model',
-              style: TextStyle(fontFamily: 'Poppins'),
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        Get.snackbar(
+          'Error',
+          'Failed to download language model',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
@@ -609,25 +588,18 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
           _downloadingLanguage = '';
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: LocalizedText(
-              text:  'Error downloading language: $e',
-              style: const TextStyle(fontFamily: 'Poppins'),
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        Get.snackbar(
+          'Error',
+          'Error downloading language: $e',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
     }
   }
 
   void _onContinuePressed() async {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageController = Get.find<LanguageController>();
 
     try {
       // Check if we need to download the language model
@@ -642,22 +614,15 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
         });
 
         // Perform the actual download
-        final success = await languageProvider.downloadLanguageModel(_selectedLanguage);
+        final success = await languageController.downloadLanguageModel(_selectedLanguage);
 
         if (!success) {
           // Show error message and return if download failed
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const LocalizedText(
-                text:  'Failed to download language model',
-                style: TextStyle(fontFamily: 'Poppins'),
-              ),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+          Get.snackbar(
+            'Error',
+            'Failed to download language model',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
           );
 
           setState(() {
@@ -670,7 +635,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
       }
 
       // Ensure language is set
-      await languageProvider.changeLanguage(_selectedLanguage);
+      await languageController.changeLanguage(_selectedLanguage);
 
       // Mark first launch as completed
       await LanguageService.setFirstLaunchCompleted();
@@ -687,14 +652,7 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
       widget.onLanguageSelected(_selectedLanguage);
 
       // Navigate directly to home screen with smooth transition
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyHomePage(
-
-          ),
-        ),
-      );
+      Get.offAll(() => const MyHomePage());
 
     } catch (e) {
       // Hide loading indicator
@@ -706,18 +664,11 @@ class _RegistrationLanguageScreenState extends State<RegistrationLanguageScreen>
       }
 
       // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: LocalizedText(
-            text:  'Failed to proceed: $e',
-            style: const TextStyle(fontFamily: 'Poppins'),
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+      Get.snackbar(
+        'Error',
+        'Failed to proceed: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }

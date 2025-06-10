@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'deliveries_screen.dart';
 import 'customer_orders_screen.dart';
 import 'new_delivery_screen.dart';
 import 'add_load_screen.dart';
 import 'enhanced_language_selection_screen.dart';
 import 'package:smart_distributor_app/localized_text.dart';
-import 'package:smart_distributor_app/language_provider.dart';
+import 'package:smart_distributor_app/language_controller.dart';
 import 'package:smart_distributor_app/app_colours.dart';
-import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
-
-  //final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -62,22 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              Consumer<LanguageProvider>(
-                builder: (context, languageProvider, child) {
-                  final languageInfo = languageProvider.getLanguageInfo(
-                    languageProvider.currentLanguage,
+              GetX<LanguageController>(
+                builder: (languageController) {
+                  final languageInfo = languageController.getLanguageInfo(
+                    languageController.currentLanguage,
                   );
 
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const EnhancedLanguageSelectionScreen(
-                            isFromSettings: true,
-                          ),
-                        ),
-                      );
+                      Get.to(() => const EnhancedLanguageSelectionScreen(
+                        isFromSettings: true,
+                      ));
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -194,12 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: AppColors.offWhite,
                 iconColor: AppColors.primaryMaroon,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NewDeliveryScreen(),
-                    ),
-                  );
+                  Get.to(() => const NewDeliveryScreen());
                 },
               ),
               _buildQuickActionItem(
@@ -208,12 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: AppColors.offWhite,
                 iconColor: AppColors.primaryMaroon,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CustomerOrdersScreen(),
-                    ),
-                  );
+                  Get.to(() => const CustomerOrdersScreen());
                 },
               ),
               _buildQuickActionItem(
@@ -222,12 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: AppColors.offWhite,
                 iconColor: AppColors.primaryMaroon,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddLoadScreen(),
-                    ),
-                  );
+                  Get.to(() => const AddLoadScreen());
                 },
               ),
               _buildQuickActionItem(
@@ -334,12 +312,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddLoadScreen(),
-                    ),
-                  );
+                  Get.to(() => const AddLoadScreen());
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -356,9 +329,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: AppColors.primaryMaroon,
                       ),
                       const SizedBox(width: 4),
-                      LocalizedText(
+                      const LocalizedText(
                         text: 'Add Load',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primaryMaroon,
@@ -404,9 +377,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontFamily: 'Poppins',
                 ),
               ),
-              Text(
+              const Text(
                 '69%',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: AppColors.lightMaroon,
@@ -485,12 +458,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DeliveriesScreen(),
-                    ),
-                  );
+                  Get.to(() => const DeliveriesScreen());
                 },
                 child: const LocalizedText(
                   text: 'View All',
@@ -644,26 +612,17 @@ class _MyHomePageState extends State<MyHomePage> {
             // Already on home
               break;
             case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DeliveriesScreen(),
-                ),
-              );
+              Get.to(() => const DeliveriesScreen());
               break;
             case 2:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddLoadScreen(),
-                ),
-              );
+              Get.to(() => const AddLoadScreen());
               break;
             case 3:
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: LocalizedText(text: 'Profile screen coming soon!'),
-                ),
+              Get.snackbar(
+                'Info',
+                'Profile screen coming soon!',
+                backgroundColor: AppColors.primaryMaroon,
+                colorText: Colors.white,
               );
               break;
           }
@@ -708,107 +667,91 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showMoreActionsBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.cardBackground,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.darkGray.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const LocalizedText(
+              text: 'More Actions',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryMaroon,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildBottomSheetItem(
+              icon: Icons.people,
+              title: 'Customer Orders',
+              onTap: () {
+                Get.back();
+                Get.to(() => const CustomerOrdersScreen());
+              },
+            ),
+            _buildBottomSheetItem(
+              icon: Icons.inventory_2,
+              title: 'Add Load',
+              onTap: () {
+                Get.back();
+                Get.to(() => const AddLoadScreen());
+              },
+            ),
+            _buildBottomSheetItem(
+              icon: Icons.translate,
+              title: 'Change Language',
+              onTap: () {
+                Get.back();
+                Get.to(() => const EnhancedLanguageSelectionScreen(
+                  isFromSettings: true,
+                ));
+              },
+            ),
+            _buildBottomSheetItem(
+              icon: Icons.analytics,
+              title: 'Reports',
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'Info',
+                  'Reports feature coming soon!',
+                  backgroundColor: AppColors.primaryMaroon,
+                  colorText: Colors.white,
+                );
+              },
+            ),
+            _buildBottomSheetItem(
+              icon: Icons.settings,
+              title: 'Settings',
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'Info',
+                  'Settings feature coming soon!',
+                  backgroundColor: AppColors.primaryMaroon,
+                  colorText: Colors.white,
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.darkGray.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const LocalizedText(
-                text: 'More Actions',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryMaroon,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildBottomSheetItem(
-                icon: Icons.people,
-                title: 'Customer Orders',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CustomerOrdersScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.inventory_2,
-                title: 'Add Load',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddLoadScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.translate,
-                title: 'Change Language',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EnhancedLanguageSelectionScreen(
-                        isFromSettings: true,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.analytics,
-                title: 'Reports',
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: LocalizedText(text: 'Reports feature coming soon!'),
-                    ),
-                  );
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.settings,
-                title: 'Settings',
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: LocalizedText(text: 'Settings feature coming soon!'),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -852,3 +795,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:smart_distributor_app/language_provider.dart';
+import 'package:smart_distributor_app/language_controller.dart';
 import 'package:smart_distributor_app/ml_translation_service.dart';
 import 'package:smart_distributor_app/localized_text.dart';
+import 'package:smart_distributor_app/app_colours.dart';
 
 class AddLoadScreen extends StatefulWidget {
   const AddLoadScreen({super.key});
@@ -68,7 +70,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
             child: LocalizedText(
               text: 'Save',
               style: TextStyle(
-                color: Colors.blue[600],
+                color: AppColors.primaryMaroon,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -120,7 +122,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_today, color: Colors.blue[600]),
+              Icon(Icons.calendar_today, color: AppColors.primaryMaroon),
               const SizedBox(width: 8),
               const LocalizedText(
                 text: 'Load Date',
@@ -137,7 +139,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
             controller: _dateController,
             readOnly: true,
             decoration: InputDecoration(
-    label: const LocalizedText(text:'Select Date'),
+              labelText: 'Select Date',
               prefixIcon: const Icon(Icons.event),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.calendar_today),
@@ -179,7 +181,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.propane_tank, color: Colors.blue[600]),
+              Icon(Icons.propane_tank, color: AppColors.primaryMaroon),
               const SizedBox(width: 8),
               const LocalizedText(
                 text: 'Cylinder Type',
@@ -211,12 +213,12 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue[600] : Colors.grey[100],
+                      color: isSelected ? AppColors.primaryMaroon : Colors.grey[100],
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: isSelected
                           ? [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: AppColors.primaryMaroon.withOpacity(0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -269,10 +271,10 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.inventory, color: Colors.blue[600]),
+              Icon(Icons.inventory, color: AppColors.primaryMaroon),
               const SizedBox(width: 8),
               const LocalizedText(
-                text:'Quantity Details',
+                text: 'Quantity Details',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -286,7 +288,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
             controller: _loadInController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-            label: const LocalizedText(text: 'Load In Quantity'),
+              labelText: 'Load In Quantity',
               prefixIcon: const Icon(Icons.add_circle_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -307,7 +309,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
             controller: _emptyController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              label: const LocalizedText(text:'Empty Cylinders'),
+              labelText: 'Empty Cylinders',
               prefixIcon: const Icon(Icons.remove_circle_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -326,7 +328,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const LocalizedText(
-                  text:'Net Inventory Addition',
+                  text: 'Net Inventory Addition',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -387,7 +389,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
                 icon: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.blue[600],
+                    color: AppColors.primaryMaroon,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -421,7 +423,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
                   ),
                   const SizedBox(height: 4),
                   LocalizedText(
-                    text:'Tap + to add defective cylinder records',
+                    text: 'Tap + to add defective cylinder records',
                     style: TextStyle(
                       color: Colors.grey[500],
                       fontSize: 12,
@@ -465,7 +467,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             LocalizedText(
-                              text:'${defective['cylinderType']} - ${defective['quantity']} cylinders',
+                              text: '${defective['cylinderType']} - ${defective['quantity']} cylinders',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -473,7 +475,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
                             ),
                             const SizedBox(height: 4),
                             LocalizedText(
-                              text:'Issue: ${defective['issue']}',
+                              text: 'Issue: ${defective['issue']}',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 12,
@@ -523,7 +525,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.note, color: Colors.blue[600]),
+              Icon(Icons.note, color: AppColors.primaryMaroon),
               const SizedBox(width: 8),
               const LocalizedText(
                 text: 'Additional Notes',
@@ -557,7 +559,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
       child: ElevatedButton(
         onPressed: _submitLoad,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[600],
+          backgroundColor: AppColors.primaryMaroon,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -585,7 +587,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.blue[600]!,
+              primary: AppColors.primaryMaroon,
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -608,78 +610,72 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
     final quantityController = TextEditingController();
     final issueController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const LocalizedText(
-            text:('Add Defective Cylinder')),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<String>(
-                  value: cylinderTypeController.text,
-                  decoration: const InputDecoration(
-                    label: const LocalizedText(text: 'Cylinder Type'),
-                    prefixIcon: Icon(Icons.propane_tank),
-                  ),
-                  items: _cylinderTypes.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    cylinderTypeController.text = value!;
-                  },
+    Get.dialog(
+      AlertDialog(
+        title: const LocalizedText(text: 'Add Defective Cylinder'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: cylinderTypeController.text,
+                decoration: const InputDecoration(
+                  labelText: 'Cylinder Type',
+                  prefixIcon: Icon(Icons.propane_tank),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: quantityController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    label: const LocalizedText(text: 'Quantity'),
-                    prefixIcon: Icon(Icons.format_list_numbered),
-                  ),
+                items: _cylinderTypes.map((type) {
+                  return DropdownMenuItem(
+                    value: type,
+                    child: Text(type),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  cylinderTypeController.text = value!;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Quantity',
+                  prefixIcon: Icon(Icons.format_list_numbered),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: issueController,
-                  decoration: const InputDecoration(
-                    label: const LocalizedText(text:'Issue Description'),
-                    prefixIcon: Icon(Icons.error_outline),
-                  ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: issueController,
+                decoration: const InputDecoration(
+                  labelText: 'Issue Description',
+                  prefixIcon: Icon(Icons.error_outline),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const LocalizedText(
-              text:('Cancel')),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (quantityController.text.isNotEmpty &&
-                    issueController.text.isNotEmpty) {
-                  setState(() {
-                    _defectiveCylinders.add({
-                      'cylinderType': cylinderTypeController.text,
-                      'quantity': quantityController.text,
-                      'issue': issueController.text,
-                    });
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const LocalizedText(text: 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (quantityController.text.isNotEmpty &&
+                  issueController.text.isNotEmpty) {
+                setState(() {
+                  _defectiveCylinders.add({
+                    'cylinderType': cylinderTypeController.text,
+                    'quantity': quantityController.text,
+                    'issue': issueController.text,
                   });
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const LocalizedText(
-        text:('Add')),
-            ),
-          ],
-        );
-      },
+                });
+                Get.back();
+              }
+            },
+            child: const LocalizedText(text: 'Add'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -707,47 +703,41 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
 
   void _saveLoad() {
     if (_formKey.currentState!.validate()) {
-      // Save as draft
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: LocalizedText(
-            text:('Load saved as draft')),
-          backgroundColor: Colors.orange,
-        ),
+      Get.snackbar(
+        'Success',
+        'Load saved as draft',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
       );
     }
   }
 
   void _submitLoad() {
     if (_formKey.currentState!.validate()) {
-      // Submit load
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Submit Load'),
-            content: const Text('Are you sure you want to submit this load record?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Load submitted successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
-                child: const Text('Submit'),
-              ),
-            ],
-          );
-        },
+      Get.dialog(
+        AlertDialog(
+          title: const LocalizedText(text: 'Submit Load'),
+          content: const LocalizedText(text: 'Are you sure you want to submit this load record?'),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: const LocalizedText(text: 'Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.back();
+                Get.back();
+                Get.snackbar(
+                  'Success',
+                  'Load submitted successfully!',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              },
+              child: const LocalizedText(text: 'Submit'),
+            ),
+          ],
+        ),
       );
     }
   }
