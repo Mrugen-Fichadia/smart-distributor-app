@@ -62,7 +62,7 @@ class _HotplateInScreenState extends State<HotplateInScreen> {
           backgroundColor: primary,
 
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Get.back();
           },

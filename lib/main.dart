@@ -15,37 +15,13 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Smart Distributor App',
       theme: ThemeData(
-        primaryColor:  Color(0xFF8B0000),
-        // primarySwatch: Color(0xFF8B0000),
-        fontFamily: 'Poppins', // A clean, modern font
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: const TextStyle(
-            color: Colors.black54,
-            fontWeight: FontWeight.w500,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16.0,
-            horizontal: 16.0,
-          ),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       debugShowCheckedModeBanner: false,
 
       // home: const SplashScreen(),
       // home: ForgotPasswordScreen(),
-     home: ToolsScreen(),
+      home: ToolsScreen(),
     );
   }
 }

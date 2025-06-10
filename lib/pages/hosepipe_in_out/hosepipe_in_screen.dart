@@ -74,7 +74,7 @@ class _HosePipeInScreenState extends State<HosePipeInScreen> {
           },
         ),
         title: Text(
-          'HosePipe',
+          'HosePipe In',
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold,

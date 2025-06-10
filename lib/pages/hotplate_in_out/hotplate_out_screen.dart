@@ -18,7 +18,10 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
   String? _selectedPaymentMode;
+  String? _selectedHawker;
 
   bool _isLoading = false;
 
@@ -27,11 +30,15 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
 
   final List<String> _paymentModes = ['Cash', 'Advanced'];
 
+  final List<String> _hawkers = ['Ramesh', 'Suresh', 'Ganesh'];
+
   @override
   void dispose() {
     _nameController.dispose();
     _quantityController.dispose();
     _costController.dispose();
+    _addressController.dispose();
+    _mobileController.dispose();
     super.dispose();
   }
 
@@ -65,11 +72,9 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        
-          backgroundColor: primary,
+        backgroundColor: primary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Get.back();
           },
@@ -79,7 +84,7 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -98,15 +103,17 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
+                   
+                      // const SizedBox(height: 20),
                       TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
-                          labelText: 'Person Name',
+                          labelText: 'Customer Name',
                           prefixIcon: Icon(Icons.person),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter a name';
+                            return 'Please enter a customer name';
                           }
                           return null;
                         },
@@ -133,20 +140,67 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
                         style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedHawker,
+                          decoration: const InputDecoration(
+                            labelText: 'Hawker',
+                            prefixIcon: Icon(Icons.person_outline),
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _hawkers.map((String hawker) {
+                            return DropdownMenuItem<String>(
+                              value: hawker,
+                              child: Text(
+                                hawker,
+                                style: GoogleFonts.poppins(color: Colors.black),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedHawker = newValue;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a hawker';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _costController,
                         decoration: const InputDecoration(
-                          labelText: 'Cost',
+                          labelText: 'Amount',
                           prefixIcon: Icon(Icons.attach_money),
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter cost';
+                            return 'Please enter amount';
                           }
                           if (double.tryParse(value) == null ||
                               double.parse(value) <= 0) {
-                            return 'Please enter a valid cost';
+                            return 'Please enter a valid amount';
+                          }
+                          return null;
+                        },
+                        style: GoogleFonts.poppins(color: Colors.black),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                          labelText: 'Address',
+                          prefixIcon: Icon(Icons.location_on),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter an address';
                           }
                           return null;
                         },
