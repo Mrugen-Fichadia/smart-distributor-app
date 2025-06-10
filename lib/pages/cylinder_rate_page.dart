@@ -1,115 +1,8 @@
 // ignore_for_file: unused_field, deprecated_member_use
-
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-void main() {
-  runApp(const CylinderRateApp());
-}
-
-class CylinderRateApp extends StatelessWidget {
-  const CylinderRateApp({super.key});
-
-  // Updated Color Palette
-  static const Color primaryColor = Color(0xFF800000); // Maroon
-  static const Color backgroundColor = Color(0xFFFFFFFF); // White
-  static const Color textColor = Color(
-    0xFF003366,
-  ); // Dark Blue for text/headers
-  static const Color cardBackgroundColor = Color(
-    0xFFF5F5F5,
-  ); // Light Gray for cards
-  static const Color accentColor = Color(
-    0xFFFFB300,
-  ); // Amber/Orange for accents
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Cylinder Rate Change',
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        scaffoldBackgroundColor: backgroundColor,
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: primaryColor,
-          secondary: accentColor, // Using accentColor for secondary
-          onPrimary: Colors.white, // Text on primary color
-          onSurface: textColor, // Text on surfaces like card background
-          surface: cardBackgroundColor, // Surface color for cards
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w500,
-          ), // Slightly bolder label
-          hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
-          floatingLabelStyle: TextStyle(
-            color: primaryColor,
-            fontWeight: FontWeight.w600,
-          ), // Bolder focused label
-          filled: true,
-          fillColor: Colors.white, // Input field background
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: textColor.withOpacity(0.3),
-              width: 1.0,
-            ), // Finer, subtle border
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: primaryColor,
-              width: 2.5,
-            ), // More prominent focus border
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.red,
-              width: 1.5,
-            ), // Clearer error border
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.red, width: 2.5),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 14,
-          ), // Slightly more padding
-          errorStyle: GoogleFonts.poppins(
-            color: Colors.red,
-            fontSize: 13,
-            height: 1.2,
-          ), // Error text style
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            textStyle: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w700, // Make button text bolder
-            ),
-            minimumSize: const Size.fromHeight(55), // Slightly taller button
-            elevation: 7, // More pronounced elevation
-            shadowColor: primaryColor.withOpacity(0.6), // Stronger shadow
-          ),
-        ),
-      ),
-      home: const CylinderRatePage(),
-    );
-  }
-}
 
 class CylinderRatePage extends StatefulWidget {
   const CylinderRatePage({super.key});
@@ -125,9 +18,8 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
   final _rate19kgController = TextEditingController();
   final _rate5kgController = TextEditingController();
 
-  static const Color _primaryColor = CylinderRateApp.primaryColor;
-  static const Color _textColor = CylinderRateApp.textColor;
-  static const Color _cardBackgroundColor = CylinderRateApp.cardBackgroundColor;
+  static const Color cardBackgroundColor = Color(0xFFF5F5F5);
+  static const Color accentColor = Color(0xFFFFB300);
 
   bool _isLoading = false;
 
@@ -162,7 +54,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            backgroundColor: _primaryColor,
+            backgroundColor: primary,
             duration: const Duration(seconds: 3), // Longer duration
             behavior: SnackBarBehavior.floating, // Make it floating
             shape: RoundedRectangleBorder(
@@ -187,10 +79,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
   }) {
     return InputDecoration(
       labelText: labelText,
-      prefixIcon: Icon(
-        icon,
-        color: _textColor.withOpacity(0.7),
-      ), // Subtle icon color
+      prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.7)), // Subtle icon color
       hintText: 'e.g., 999.00', // Added hint text
     );
   }
@@ -209,12 +98,12 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
           padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
           child: Row(
             children: [
-              Icon(icon, color: _textColor, size: 20), // Icon next to the label
+              Icon(icon, color: Colors.black, size: 20), // Icon next to the label
               const SizedBox(width: 8),
               Text(
                 labelText,
                 style: GoogleFonts.poppins(
-                  color: _textColor,
+                  color: Colors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w600, // Make it bold
                 ),
@@ -231,7 +120,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
             labelText: 'Enter Rate',
             icon: Icons.currency_rupee,
           ), // Simplified label, icon handled in header
-          style: GoogleFonts.poppins(color: _textColor, fontSize: 16),
+          style: GoogleFonts.poppins(color: Colors.black, fontSize: 16),
           validator: validator,
         ),
       ],
@@ -242,22 +131,19 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'Cylinder Rate Change',
           style: GoogleFonts.poppins(
             fontSize: 24, // Slightly larger title
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back), // Modern back icon
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
       ),
@@ -273,7 +159,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
               children: [
                 Card(
                   elevation: 8, // More pronounced card elevation
-                  color: _cardBackgroundColor, // Apply card background color
+                  color: cardBackgroundColor, // Apply card background color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       20,
@@ -341,9 +227,8 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
                           child: ElevatedButton(
                             onPressed: _saveRates,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _primaryColor, // Primary color
-                              foregroundColor:
-                                  CylinderRateApp.backgroundColor, // White text
+                              backgroundColor: primary,
+                              foregroundColor: offwhite,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

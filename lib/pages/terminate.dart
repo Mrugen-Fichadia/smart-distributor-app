@@ -1,117 +1,10 @@
 // ignore_for_file: deprecated_member_use, unused_local_variable, duplicate_ignore, unused_import
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/tv-in-out.dart'; // Assuming you want to navigate back to TvInOutPage
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // Define the colors based on the image theme
-  static const Color primaryColor = Color(
-    0xFFE64A19,
-  ); // Approx. Primary from image
-  static const Color secondaryColor = Color(
-    0xFFFF8A65,
-  ); // A complementary color
-  static const Color backgroundColor = Color(
-    0xFFF5F5DC,
-  ); // Approx. Background from image
-  static const Color textColor = Color(0xFF1E4E5A); // Approx. Text from image
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Terminate Connection Form',
-      theme: ThemeData(
-        // Apply Poppins font globally
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        // Define color scheme
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: primaryColor,
-          secondary: secondaryColor,
-          onPrimary: Colors.white, // Text/icon color on primary background
-          onSurface: textColor, // Default text color on surfaces
-          surface: Colors.white, // Card/surface background color
-        ),
-        // Set scaffold background color globally
-        scaffoldBackgroundColor: backgroundColor,
-
-        // Style for TextFormFields
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: TextStyle(color: textColor), // Label text color
-          hintStyle: TextStyle(
-            // ignore: deprecated_member_use
-            color: textColor.withOpacity(0.6),
-          ), // Hint text color
-          floatingLabelStyle: TextStyle(
-            color: primaryColor,
-          ), // Floating label color
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: textColor.withOpacity(0.5),
-            ), // Default border color
-            borderRadius: BorderRadius.circular(8),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: primaryColor,
-              width: 2,
-            ), // Focused border color
-            borderRadius: BorderRadius.circular(8),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.redAccent,
-            ), // Error border color
-            borderRadius: BorderRadius.circular(8),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.redAccent,
-              width: 2,
-            ), // Focused error border color
-            borderRadius: BorderRadius.circular(8),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-        ),
-
-        // Style for ElevatedButton
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor, // Button background color
-            foregroundColor: Colors.white, // Button text/icon color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                8,
-              ), // Rounded corners for buttons
-            ),
-            textStyle: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-            minimumSize: const Size.fromHeight(
-              50,
-            ), // Standard height for buttons
-            elevation: 5, // Added elevation
-            shadowColor: primaryColor.withOpacity(0.4), // Added shadow color
-          ),
-        ),
-        // No need for primarySwatch as we are defining explicit colors
-        // primarySwatch: Colors.blue, // REMOVED as custom colors are now defined
-      ),
-      home: const TerminateConnectionForm(),
-    );
-  }
-}
 
 class TerminateConnectionForm extends StatefulWidget {
   const TerminateConnectionForm({super.key});
@@ -131,12 +24,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
       TextEditingController();
   final TextEditingController amountController = TextEditingController();
 
-  // Access colors from the MyApp class directly for consistency
-  static const Color _primaryColor = MyApp.primaryColor;
-  static const Color _backgroundColor = MyApp.backgroundColor;
-  static const Color _textColor = MyApp.textColor;
-
-  bool _isLoading = false; // State variable for loading indicator
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -192,7 +80,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
               'Connection terminated for: $name, $consumerNumber',
               style: GoogleFonts.poppins(color: Colors.white),
             ),
-            backgroundColor: _primaryColor,
+            backgroundColor: primary,
           ),
         );
         setState(() {
@@ -211,22 +99,18 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'Terminate Connection',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: _primaryColor,
-        foregroundColor: _backgroundColor, // Set text/icon color for AppBar
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigates back to the previous screen
+            Get.back();
           },
         ),
       ),
-      backgroundColor: _backgroundColor, // Apply background color to scaffold
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Form(
@@ -252,7 +136,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
                           prefixIcon: Icon(Icons.person), // Added icon
                         ),
                         validator: (value) => _validateNotEmpty(value, 'Name'),
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 15),
 
@@ -266,7 +150,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
                         keyboardType: TextInputType.number,
                         validator: (value) =>
                             _validateNumber(value, 'Consumer number'),
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 15),
 
@@ -280,7 +164,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
                         keyboardType: TextInputType.number,
                         validator: (value) =>
                             _validateNumber(value, 'Cylinder quantity'),
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 15),
 
@@ -295,7 +179,7 @@ class _TerminateConnectionFormState extends State<TerminateConnectionForm> {
                           decimal: true,
                         ),
                         validator: (value) => _validateNumber(value, 'Amount'),
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                     ],
                   ),

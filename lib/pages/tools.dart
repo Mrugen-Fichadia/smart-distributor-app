@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
 import 'package:smart_distributor_app/pages/quick_customer.dart';
 import 'package:smart_distributor_app/pages/tv-in-out.dart';
+import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
+import 'package:smart_distributor_app/pages/distribution_center/distribution_list_screen.dart';
 
 class Tools extends StatefulWidget {
   const Tools({super.key});
@@ -12,12 +16,16 @@ class Tools extends StatefulWidget {
 class _ToolsState extends State<Tools> {
   final List<Map<String, dynamic>> tools = [
     {"title": "Add Customer", "icon": Icons.person_add},
-    {"title": "Add Stock", "icon": null},
+    {"title": "Edit Rates", "icon": null, "page": CylinderRatePage()},
     {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
     {"title": "Daily Report", "icon": Icons.today},
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},
-    {"title": "Add Hawker", "icon": Icons.delivery_dining},
-    {"title": "Distribution Center", "icon": Icons.location_city},
+    {
+      "title": "Add Hawker",
+      "icon": Icons.delivery_dining,
+      "page": HawkerListPage(),
+    },
+    {"title": "Distribution Center", "icon": Icons.location_city, "page": DistributionCenterListPage()},
     {"title": "Payment Status", "icon": Icons.payment},
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
     {"title": "HosePipe In/Out", "icon": null},
@@ -95,40 +103,40 @@ class ToolCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 iconData != null
-                    ? Icon(iconData, size: 36, color: Colors.deepPurple)
+                    ? Icon(iconData, size: 36, color: primary)
                     : title == "TV In/Out"
                     ? Image.asset(
                         "assets/images/gas_cylinder.png",
-                        color: Colors.deepPurple,
+                        color: primary,
                         height: 35,
                       )
                     : title == "HosePipe In/Out"
                     ? Image.asset(
                         "assets/images/plumbing.png",
-                        color: Colors.deepPurple,
+                        color: primary,
                         height: 35,
                       )
                     : title == "DRP In/Out"
                     ? Image.asset(
                         "assets/images/regulator.png",
-                        color: Colors.deepPurple,
+                        color: primary,
                         height: 35,
                       )
                     : title == "Quick Customer"
                     ? Image.asset(
                         "assets/images/quick_customer.png",
-                        color: Colors.deepPurple,
+                        color: primary,
                         height: 35,
                       )
-                    : title == "Add Stock"
+                    : title == "Edit Rates"
                     ? Image.asset(
-                        "assets/images/add_stock.png",
-                        color: Colors.deepPurple,
+                        "assets/images/rates.png",
+                        color: primary,
                         height: 35,
                       )
                     : Image.asset(
                         "assets/images/gas-stove.png",
-                        color: Colors.deepPurple,
+                        color: primary,
                         height: 40,
                       ),
                 SizedBox(height: 8),

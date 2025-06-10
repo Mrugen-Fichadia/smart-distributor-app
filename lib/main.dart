@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/pages/auth.dart';
 import 'dart:async';
+import 'package:smart_distributor_app/pages/auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:smart_distributor_app/pages/home.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,13 +16,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Smart Distributor App',
-      // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        fontFamily: 'Poppins', // A clean, modern font
-        // Define styles for input fields to match the new UI
+        colorScheme: ColorScheme.fromSeed(seedColor: primary, primary: primary, secondary: secondary),
+        fontFamily: 'Poppins',
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(
             color: Colors.black54,
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+            borderSide: const BorderSide(color: primary, width: 2.0),
           ),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16.0,
@@ -83,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Smart Distributor App',
               style: TextStyle(
                 fontSize: 24,
-                color: const Color.fromRGBO(217, 50, 14, 1),
+                color: primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 class QuickCustomerForm extends StatefulWidget {
   const QuickCustomerForm({super.key});
@@ -13,21 +15,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
 
-  static const Color primaryColor = Color(
-    0xFFE64A19,
-  ); // Primary from image (Orange/Red)
-  static const Color backgroundColor = Color(
-    0xFFF5F5DC,
-  ); // Background from image (Light Beige)
-  static const Color textColor = Color(0xFF1E4E5A);
-
-  // Reference the theme colors for direct use within this state
-  static const Color _primaryColor = primaryColor;
-  // ignore: unused_field
-  static const Color _backgroundColor = backgroundColor;
-  static const Color _textColor = textColor;
-
-  bool _isLoading = false; // State to manage loading indicator
+  bool _isLoading = false;
 
   Future<void> _saveForm() async {
     if (_formKey.currentState!.validate()) {
@@ -45,7 +33,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
               "Customer saved successfully!",
               style: GoogleFonts.poppins(color: Colors.white),
             ),
-            backgroundColor: _primaryColor,
+            backgroundColor: primary,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -70,13 +58,11 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _primaryColor, // Use theme primary color for AppBar
-        elevation: 0, // No shadow for a flat, modern look
-        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         title: Text(
@@ -84,7 +70,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold, // Make title bolder
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -117,7 +103,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                           }
                           return null;
                         },
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 20), // Increased spacing
                       TextFormField(
@@ -135,10 +121,11 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                           }
                           return null;
                         },
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 30), // Increased spacing
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: primary),
                         onPressed: _isLoading
                             ? null
                             : _saveForm, // Disable button when loading
@@ -147,12 +134,13 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: offwhite,
                                   strokeWidth: 2,
                                 ),
                               )
                             : const Text(
                                 'Save Customer',
+                                style: TextStyle(color: offwhite),
                               ), // Changed button text
                       ),
                     ],

@@ -1,9 +1,11 @@
 // ignore_for_file: unused_field, file_names, use_super_parameters
-
+import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/pages/new-connection.dart';
 import 'package:smart_distributor_app/pages/terminate.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:get/get.dart';
 
 class TvInOutPage extends StatefulWidget {
   const TvInOutPage({Key? key}) : super(key: key);
@@ -17,39 +19,23 @@ class _TvInOutPageState extends State<TvInOutPage> {
 
   String? _selectedOption;
 
-  // Define the colors based on the image theme
-  static const Color _primaryColor = Color(
-    0xFFE64A19,
-  ); // Approx. Primary from image
-  static const Color _secondaryColor = Color(
-    0xFFFF8A65,
-  ); // Approx. Secondary from image
-  static const Color _backgroundColor = Color(
-    0xFFF5F5DC,
-  ); // Approx. Background from image
-  static const Color _textColor = Color(0xFF1E4E5A); // Approx. Text from image
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'Tv In/Out',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
         ),
-        centerTitle: true,
-        backgroundColor: _primaryColor, // Apply background color to app bar
-        foregroundColor:
-            _backgroundColor, // Apply text color to app bar title and icons
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // <-- This navigates back to TvInOutPage
+            Get.back();
           },
         ),
       ),
-      backgroundColor: _backgroundColor, // Apply background color to scaffold
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -70,7 +56,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w600,
                       fontSize: 22,
-                      color: _textColor, // Apply text color
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -79,7 +65,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                       'New connection',
                       style: GoogleFonts.poppins(
                         fontSize: 16,
-                        color: _textColor,
+                        color: Colors.black,
                       ), // Apply text color
                     ),
                     value: 'new_connection',
@@ -90,14 +76,14 @@ class _TvInOutPageState extends State<TvInOutPage> {
                       });
                     },
                     activeColor:
-                        _primaryColor, // Use primary color for active radio button
+                        primary,
                   ),
                   RadioListTile<String>(
                     title: Text(
                       'Terminate connection',
                       style: GoogleFonts.poppins(
                         fontSize: 16,
-                        color: _textColor,
+                        color: Colors.black,
                       ), // Apply text color
                     ),
                     value: 'terminate_connection',
@@ -107,8 +93,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                         _selectedOption = val;
                       });
                     },
-                    activeColor:
-                        _primaryColor,
+                    activeColor: primary,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -129,7 +114,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => NewConnectionApp(),
+                              builder: (context) => NewConnectionPage(),
                             ),
                           );
                         } else if (_selectedOption == 'terminate_connection') {
@@ -145,7 +130,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(45),
                       backgroundColor:
-                          _primaryColor, // Apply primary color from image
+                          primary, // Apply primary color from image
                       foregroundColor:
                           Colors.white, // Text color for the button
                     ),
