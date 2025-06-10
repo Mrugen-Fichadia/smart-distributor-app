@@ -1,94 +1,101 @@
 // ignore_for_file: file_names, deprecated_member_use
 import 'package:get/get.dart';
-import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
-class NewConnectionPage extends StatefulWidget {
+class NewConnectionController extends GetxController {
+  final formKey = GlobalKey<FormState>(); // Corrected type for GlobalKey
+
+  final nameController = TextEditingController();
+  final consumerNumberController = TextEditingController();
+  final amountController = TextEditingController();
+
+  var isLoading = false.obs;
+
+  var domesticCount = 0.obs;
+  var commercialCount = 0.obs;
+  var industrialCount = 0.obs;
+
+  int get totalQuantity =>
+      domesticCount.value + commercialCount.value + industrialCount.value;
+
+  void increment(RxInt counter) => counter.value++;
+  void decrement(RxInt counter) {
+    if (counter.value > 0) counter.value--;
+  }
+
+  Future<void> saveForm() async {
+    if (formKey.currentState!.validate()) {
+      isLoading.value = true;
+      await Future.delayed(const Duration(seconds: 2));
+      Get.snackbar(
+        'Success',
+        'Form saved successfully!',
+        backgroundColor: primary,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      clearForm();
+    }
+  }
+
+  void clearForm() {
+    nameController.clear();
+    consumerNumberController.clear();
+    amountController.clear();
+    domesticCount.value = 0;
+    commercialCount.value = 0;
+    industrialCount.value = 0;
+    isLoading.value = false;
+  }
+
+  String? validateRequired(String? value) =>
+      (value == null || value.trim().isEmpty) ? 'This field is required' : null;
+
+  String? validateNumber(String? value) {
+    if (value == null || value.trim().isEmpty) return 'This field is required';
+    final number = num.tryParse(value);
+    if (number == null || number <= 0) return 'Enter a valid number';
+    return null;
+  }
+}
+
+class NewConnectionPage extends StatelessWidget {
   const NewConnectionPage({super.key});
 
   @override
-  State<NewConnectionPage> createState() => _NewConnectionPageState();
-}
-
-class _NewConnectionPageState extends State<NewConnectionPage> {
-  final _formKey = GlobalKey<FormState>();
-
-  final _nameController = TextEditingController();
-  final _consumerNumberController = TextEditingController();
-  final _cylinderQuantityController = TextEditingController();
-  final _amountController = TextEditingController();
-
-  bool _isLoading = false;
-
-  int _domesticCount = 0;
-  int _commercialCount = 0;
-  int _industrialCount = 0;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _consumerNumberController.dispose();
-    _cylinderQuantityController.dispose();
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _saveForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Form saved successfully!',
-              style: GoogleFonts.poppins(color: Colors.white),
-            ),
-            backgroundColor: primary,
-          ),
-        );
-        setState(() {
-          _isLoading = false;
-          _nameController.clear();
-          _consumerNumberController.clear();
-          _cylinderQuantityController.clear();
-          _amountController.clear();
-          _domesticCount = 0;
-          _commercialCount = 0;
-          _industrialCount = 0;
-        });
-      }
-    }
-  }
-
-  String? _validateRequired(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'This field is required';
-    }
-    return null;
-  }
-
-  String? _validateNumber(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'This field is required';
-    }
-    final number = num.tryParse(value);
-    if (number == null) {
-      return 'Enter a valid number';
-    }
-    if (number <= 0) {
-      return 'Enter a number greater than zero';
-    }
-    return null;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NewConnectionController());
+
+    // Local TextEditingControllers for quantity fields, managed within build
+    final domesticQuantityTextController = TextEditingController(
+      text: controller.domesticCount.value.toString(),
+    );
+    final commercialQuantityTextController = TextEditingController(
+      text: controller.commercialCount.value.toString(),
+    );
+    final industrialQuantityTextController = TextEditingController(
+      text: controller.industrialCount.value.toString(),
+    );
+
+    // Using `ever` to keep text controllers in sync with RxInt values
+    ever(controller.domesticCount, (int newCount) {
+      if (newCount.toString() != domesticQuantityTextController.text) {
+        domesticQuantityTextController.text = newCount.toString();
+      }
+    });
+    ever(controller.commercialCount, (int newCount) {
+      if (newCount.toString() != commercialQuantityTextController.text) {
+        commercialQuantityTextController.text = newCount.toString();
+      }
+    });
+    ever(controller.industrialCount, (int newCount) {
+      if (newCount.toString() != industrialQuantityTextController.text) {
+        industrialQuantityTextController.text = newCount.toString();
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -98,195 +105,305 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.back();
-          },
+          onPressed: () => Get.back(),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 10),
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          prefixIcon: Icon(Icons.person),
+          key: controller.formKey,
+          child: Obx(
+            () => ListView(
+              children: [
+                const SizedBox(height: 10),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          controller: controller.nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            prefixIcon: Icon(Icons.person),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: controller.validateRequired,
+                          style: const TextStyle(color: Colors.black),
                         ),
-                        validator: _validateRequired,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: _consumerNumberController,
-                        decoration: const InputDecoration(
-                          labelText: 'Consumer number',
-                          prefixIcon: Icon(Icons.numbers),
+                        const SizedBox(height: 15),
+                        TextFormField(
+                          controller: controller.consumerNumberController,
+                          decoration: const InputDecoration(
+                            labelText: 'Consumer number',
+                            prefixIcon: Icon(Icons.numbers),
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: controller.validateRequired,
+                          style: const TextStyle(color: Colors.black),
                         ),
-                        keyboardType: TextInputType.number,
-                        validator: _validateRequired,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(height: 15),
-
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
+                        const SizedBox(height: 20),
+                        Text(
                           'Cylinder Type',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // Domestic Counter
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Domestic',
-                            style: GoogleFonts.poppins(fontSize: 15),
-                          ),
-                          Row(
+                        // Domestic Cylinder Quantity Control
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
-                                onPressed: _domesticCount > 0
-                                    ? () => setState(() => _domesticCount--)
-                                    : null,
-                              ),
                               Text(
-                                '$_domesticCount',
-                                style: GoogleFonts.poppins(fontSize: 16),
+                                'Domestic (14 kg)',
+                                style: GoogleFonts.poppins(fontSize: 15),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline),
-                                onPressed: () =>
-                                    setState(() => _domesticCount++),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 60,
+                                    height: 40,
+                                    child: TextFormField(
+                                      controller:
+                                          domesticQuantityTextController,
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (val) {
+                                        final parsed = int.tryParse(val);
+                                        if (parsed != null && parsed >= 0) {
+                                          controller.domesticCount.value =
+                                              parsed;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.add_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.increment(
+                                      controller.domesticCount,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.remove_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.decrement(
+                                      controller.domesticCount,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
+                        ),
+                        Divider(color: Colors.grey[300]),
 
-                      // Commercial Counter
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Commercial',
-                            style: GoogleFonts.poppins(fontSize: 15),
-                          ),
-                          Row(
+                        // Commercial Cylinder Quantity Control
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
-                                onPressed: _commercialCount > 0
-                                    ? () => setState(() => _commercialCount--)
-                                    : null,
-                              ),
                               Text(
-                                '$_commercialCount',
-                                style: GoogleFonts.poppins(fontSize: 16),
+                                'Commercial (5 kg)',
+                                style: GoogleFonts.poppins(fontSize: 15),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline),
-                                onPressed: () =>
-                                    setState(() => _commercialCount++),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 60,
+                                    height: 40,
+                                    child: TextFormField(
+                                      controller:
+                                          commercialQuantityTextController,
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (val) {
+                                        final parsed = int.tryParse(val);
+                                        if (parsed != null && parsed >= 0) {
+                                          controller.commercialCount.value =
+                                              parsed;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.add_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.increment(
+                                      controller.commercialCount,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.remove_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.decrement(
+                                      controller.commercialCount,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
+                        ),
+                        Divider(color: Colors.grey[300]),
 
-                      // Industrial Counter
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Industrial',
-                            style: GoogleFonts.poppins(fontSize: 15),
-                          ),
-                          Row(
+                        // Industrial Cylinder Quantity Control
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
-                                onPressed: _industrialCount > 0
-                                    ? () => setState(() => _industrialCount--)
-                                    : null,
-                              ),
                               Text(
-                                '$_industrialCount',
-                                style: GoogleFonts.poppins(fontSize: 16),
+                                'Industrial (19 kg)',
+                                style: GoogleFonts.poppins(fontSize: 15),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline),
-                                onPressed: () =>
-                                    setState(() => _industrialCount++),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 60,
+                                    height: 40,
+                                    child: TextFormField(
+                                      controller:
+                                          industrialQuantityTextController,
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (val) {
+                                        final parsed = int.tryParse(val);
+                                        if (parsed != null && parsed >= 0) {
+                                          controller.industrialCount.value =
+                                              parsed;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.add_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.increment(
+                                      controller.industrialCount,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.remove_circle,
+                                      size: 28,
+                                      color: primary,
+                                    ),
+                                    onPressed: () => controller.decrement(
+                                      controller.industrialCount,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: _cylinderQuantityController,
-                        decoration: const InputDecoration(
-                          labelText: 'Cylinder quantity',
-                          prefixIcon: Icon(Icons.add_shopping_cart),
                         ),
-                        keyboardType: TextInputType.number,
-                        validator: _validateNumber,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: _amountController,
-                        decoration: const InputDecoration(
-                          labelText: 'Amount',
-                          prefixIcon: Icon(Icons.currency_rupee),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Total Quantity: ${controller.totalQuantity}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primary,
+                          ),
                         ),
-                        keyboardType: TextInputType.number,
-                        validator: _validateNumber,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ],
+                        const SizedBox(height: 15),
+                        TextFormField(
+                          controller: controller.amountController,
+                          decoration: const InputDecoration(
+                            labelText: 'Amount',
+                            prefixIcon: Icon(Icons.currency_rupee),
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: controller.validateNumber,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _saveForm,
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+                const SizedBox(height: 25),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                  ),
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : controller.saveForm,
+                  child: controller.isLoading.value
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Save',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    : const Text('Save'),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

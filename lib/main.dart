@@ -19,7 +19,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Smart Distributor App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: primary, primary: primary, secondary: secondary),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primary,
+          primary: primary,
+          secondary: secondary,
+        ),
         fontFamily: 'Poppins',
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(
@@ -41,9 +45,10 @@ class MyApp extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16.0,
             horizontal: 16.0,
-          ),)
+          ),
+        ),
       ),
-      home: const SplashScreen(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -63,9 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const MyHomePage(),
-        ),
+        MaterialPageRoute(builder: (context) => const MyHomePage()),
       );
     });
   }
@@ -73,7 +76,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
