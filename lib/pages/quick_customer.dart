@@ -1,118 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-void main() => runApp(const QuickCustomerApp());
-
-class QuickCustomerApp extends StatelessWidget {
-  const QuickCustomerApp({super.key});
-
-  // Define the colors based on the image theme
-  static const Color primaryColor = Color(
-    0xFFE64A19,
-  ); // Primary from image (Orange/Red)
-  static const Color backgroundColor = Color(
-    0xFFF5F5DC,
-  ); // Background from image (Light Beige)
-  static const Color textColor = Color(
-    0xFF1E4E5A,
-  ); // Text from image (Dark Blue/Teal)
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Quick Customer',
-      theme: ThemeData(
-        // Set scaffold background color from the theme
-        scaffoldBackgroundColor: backgroundColor,
-        // Apply Poppins font globally
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        // Define color scheme for consistent theming
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: primaryColor,
-          onPrimary: Colors.white, // Text/icon color on primary background
-          onSurface: textColor, // Default text color on surfaces
-          surface: Colors.white, // Card/surface background color
-        ),
-
-        // Global InputDecorationTheme for all TextFormFields
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: TextStyle(color: textColor), // Label text color
-          hintStyle: TextStyle(
-            // ignore: deprecated_member_use
-            color: textColor.withOpacity(0.6),
-          ), // Hint text color
-          floatingLabelStyle: TextStyle(
-            color: primaryColor,
-          ), // Floating label color when focused
-          filled: true,
-          fillColor: Colors.white, // Keep text field fill color white
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide
-                .none, // Default border is none, we'll define enabled and focused
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              // ignore: deprecated_member_use
-              color: textColor.withOpacity(0.5),
-            ), // Light border when enabled
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: primaryColor,
-              width: 2,
-            ), // Primary color, thicker border when focused
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.redAccent,
-            ), // Red border for errors
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.redAccent,
-              width: 2,
-            ), // Thicker red for focused errors
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-        ),
-
-        // Global ElevatedButtonThemeData for all ElevatedButton widgets
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor, // Button background color
-            foregroundColor: Colors.white, // Text/icon color on button
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                12,
-              ), // Match text field border radius
-            ),
-            textStyle: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-            minimumSize: const Size.fromHeight(
-              50,
-            ), // Standard height for buttons
-            elevation: 5, // Add elevation for a raised effect
-            // ignore: deprecated_member_use
-            shadowColor: primaryColor.withOpacity(0.4), // Subtle shadow
-          ),
-        ),
-        // Keeping original primarySwatch as requested
-      ),
-      home: const QuickCustomerForm(),
-    );
-  }
-}
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 class QuickCustomerForm extends StatefulWidget {
   const QuickCustomerForm({super.key});
@@ -126,13 +15,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
 
-  // Reference the theme colors for direct use within this state
-  static const Color _primaryColor = QuickCustomerApp.primaryColor;
-  // ignore: unused_field
-  static const Color _backgroundColor = QuickCustomerApp.backgroundColor;
-  static const Color _textColor = QuickCustomerApp.textColor;
-
-  bool _isLoading = false; // State to manage loading indicator
+  bool _isLoading = false;
 
   Future<void> _saveForm() async {
     if (_formKey.currentState!.validate()) {
@@ -150,7 +33,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
               "Customer saved successfully!",
               style: GoogleFonts.poppins(color: Colors.white),
             ),
-            backgroundColor: _primaryColor,
+            backgroundColor: primary,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -175,13 +58,11 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _primaryColor, // Use theme primary color for AppBar
-        elevation: 0, // No shadow for a flat, modern look
-        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         title: Text(
@@ -189,7 +70,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold, // Make title bolder
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -222,7 +103,7 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                           }
                           return null;
                         },
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 20), // Increased spacing
                       TextFormField(
@@ -240,10 +121,11 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                           }
                           return null;
                         },
-                        style: GoogleFonts.poppins(color: _textColor),
+                        style: GoogleFonts.poppins(color: Colors.black),
                       ),
                       const SizedBox(height: 30), // Increased spacing
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: primary),
                         onPressed: _isLoading
                             ? null
                             : _saveForm, // Disable button when loading
@@ -252,12 +134,13 @@ class _QuickCustomerFormState extends State<QuickCustomerForm> {
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: offwhite,
                                   strokeWidth: 2,
                                 ),
                               )
                             : const Text(
                                 'Save Customer',
+                                style: TextStyle(color: offwhite),
                               ), // Changed button text
                       ),
                     ],

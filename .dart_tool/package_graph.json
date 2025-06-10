@@ -11,9 +11,10 @@
         "cupertino_icons",
         "firebase_auth",
         "firebase_core",
-        "flutter",
         "get",
-        "google_fonts"
+        "google_fonts",
+        "intl_phone_field",
+        "pin_code_fields"
       ],
       "devDependencies": [
         "flutter_launcher_icons",
@@ -30,7 +31,7 @@
     },
     {
       "name": "flutter_launcher_icons",
-      "version": "0.13.1",
+      "version": "0.14.3",
       "dependencies": [
         "args",
         "checked_yaml",
@@ -70,17 +71,18 @@
       ]
     },
     {
-      "name": "get",
-      "version": "4.7.2",
+      "name": "intl_phone_field",
+      "version": "3.2.0",
       "dependencies": [
-        "flutter",
-        "web"
+        "flutter"
       ]
     },
     {
-      "name": "cupertino_icons",
-      "version": "1.0.8",
-      "dependencies": []
+      "name": "pin_code_fields",
+      "version": "8.0.1",
+      "dependencies": [
+        "flutter"
+      ]
     },
     {
       "name": "google_fonts",
@@ -93,16 +95,17 @@
       ]
     },
     {
-      "name": "flutter",
-      "version": "0.0.0",
+      "name": "get",
+      "version": "4.7.2",
       "dependencies": [
-        "characters",
-        "collection",
-        "material_color_utilities",
-        "meta",
-        "sky_engine",
-        "vector_math"
+        "flutter",
+        "web"
       ]
+    },
+    {
+      "name": "cupertino_icons",
+      "version": "1.0.8",
+      "dependencies": []
     },
     {
       "name": "cloud_firestore",
@@ -350,9 +353,16 @@
       ]
     },
     {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
+      "name": "flutter",
+      "version": "0.0.0",
+      "dependencies": [
+        "characters",
+        "collection",
+        "material_color_utilities",
+        "meta",
+        "sky_engine",
+        "vector_math"
+      ]
     },
     {
       "name": "crypto",
@@ -384,8 +394,8 @@
       ]
     },
     {
-      "name": "sky_engine",
-      "version": "0.0.0",
+      "name": "web",
+      "version": "1.1.1",
       "dependencies": []
     },
     {
@@ -478,6 +488,11 @@
         "path",
         "posix"
       ]
+    },
+    {
+      "name": "sky_engine",
+      "version": "0.0.0",
+      "dependencies": []
     },
     {
       "name": "typed_data",

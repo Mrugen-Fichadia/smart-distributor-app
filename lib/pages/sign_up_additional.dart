@@ -152,7 +152,9 @@ class _AdditionalSignUpPageState extends State<AdditionalSignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Additional Details")),
+      appBar: AppBar(title: const Text("Additional Details"),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24.0),
         children: [
