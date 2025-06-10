@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/add_load.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
 import 'package:smart_distributor_app/pages/quick_customer.dart';
 import 'package:smart_distributor_app/pages/tv-in-out.dart';
@@ -17,7 +18,7 @@ class _ToolsState extends State<Tools> {
   final List<Map<String, dynamic>> tools = [
     {"title": "Add Customer", "icon": Icons.person_add},
     {"title": "Edit Rates", "icon": null, "page": CylinderRatePage()},
-    {"title": "Add Stock", "icon": null},
+    {"title": "Add Stock", "icon": null, "page": AddLoadScreen()},
     {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
     {"title": "Daily Report", "icon": Icons.today},
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},

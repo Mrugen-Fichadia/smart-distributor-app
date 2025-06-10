@@ -38,7 +38,8 @@ dependencies:
   get: ^4.7.2
   google_fonts: ^6.2.1
   pin_code_fields: ^8.0.1 
-  intl_phone_field: ^3.2.0 
+  intl_phone_field: ^3.2.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

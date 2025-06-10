@@ -200,6 +200,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/3716s/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "intl_phone_field",
       "rootUri": "file:///C:/Users/3716s/AppData/Local/Pub/Cache/hosted/pub.dev/intl_phone_field-3.2.0",
       "packageUri": "lib/",

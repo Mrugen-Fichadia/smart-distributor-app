@@ -13,6 +13,7 @@
         "firebase_core",
         "get",
         "google_fonts",
+        "intl",
         "intl_phone_field",
         "pin_code_fields"
       ],
@@ -68,6 +69,15 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "intl",
+      "version": "0.18.1",
+      "dependencies": [
+        "clock",
+        "meta",
+        "path"
       ]
     },
     {
