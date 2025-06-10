@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 
 class EditHawkerPage extends StatefulWidget {
@@ -59,18 +60,28 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Edit Hawker',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: _deleteHawkerInfo,
           ),
         ],
+        title: Text(
+          'Edit Hawker',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -87,25 +98,29 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    CustomTextFormField(
-                      label: 'Name',
-                      hintText: 'Enter Hawker Name',
-                      prefixIcon: Icons.person_outline,
+                    TextFormField(
                       controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        prefixIcon: Icon(Icons.person_outline),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Name cannot be empty';
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(color: Colors.black),
                     ),
                     const SizedBox(height: 16),
-                    CustomTextFormField(
-                      label: 'Phone Number',
-                      hintText: 'Enter Phone Number',
-                      prefixIcon: Icons.phone_outlined,
-                      keyboardType: TextInputType.phone,
+                    TextFormField(
                       controller: phoneNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        hintText: 'Enter Phone Number',
+                        prefixIcon: Icon(Icons.phone_outlined),
+                      ),
+                      keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Phone number cannot be empty';
@@ -115,25 +130,32 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(color: Colors.black),
                     ),
                     const SizedBox(height: 16),
-                    CustomTextFormField(
-                      label: 'Area',
-                      hintText: 'Enter Area',
-                      prefixIcon: Icons.location_on_outlined,
+                    TextFormField(
                       controller: areaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Area',
+                        hintText: 'Enter Area',
+                        prefixIcon: Icon(Icons.location_on_outlined),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Area cannot be empty';
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(color: Colors.black),
                     ),
                     const SizedBox(height: 20),
                     PrimaryButton(
                       text: "Update Hawker",
                       onPressed: _updateHawker,
                       backgroundColor: const Color(0xFFDC2626),
+                      textColor: Colors.white,
+                      borderRadius: 12.0,
+                      height: 46.0,
                     ),
                   ],
                 ),

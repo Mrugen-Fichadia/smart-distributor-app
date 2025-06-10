@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 
 class HawkerListPage extends StatefulWidget {
@@ -90,12 +91,29 @@ class _HawkerListPageState extends State<HawkerListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Hawkers',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+      // appBar: CustomAppBar(
+      //   title: 'Hawkers',
+      //   centerTitle: true,
+      //   onLeadingPressed: () {
+      //     Get.back();
+      //   },
+      // ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        title: Text(
+          'Hawkers',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Column(
         children: [

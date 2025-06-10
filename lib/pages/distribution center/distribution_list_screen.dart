@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/distribution%20center/add_distribution_center_listpage.dart';
 import 'package:smart_distributor_app/pages/distribution%20center/edit_distribution_center_page.dart';
@@ -94,12 +95,22 @@ class _DistributionCenterListPageState
     return Scaffold(
      // ------- app color palete background -------------//
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Distribution Centers',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+     appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        title: Text(
+          'Distribution Center',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Column(
         children: [

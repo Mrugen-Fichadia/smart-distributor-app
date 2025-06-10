@@ -3,9 +3,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:smart_distributor_app/common/widgets/custom_appbar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/pages/distribution%20center/distribution_list_screen.dart';
+import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
+import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
+import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
 
 
 //------ dummy page for  navigation ease -----
@@ -15,15 +18,34 @@ class ToolsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Tools',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+      // appBar: CustomAppBar(
+      //   title: 'Dummy Page',
+      //   centerTitle: true,
+      //   onLeadingPressed: () {
+      //     Get.back();
+      //   },
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+      //     onPressed: () => Get.back(),
+      //   ),
+      // ),
+      appBar: AppBar(
+        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        title: Text(
+          'DummyPage',
+          style: GoogleFonts.poppins(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
       ),
       body: Padding(
@@ -38,6 +60,27 @@ class ToolsScreen extends StatelessWidget {
                 mainAxisSpacing: 5.0,
                 childAspectRatio: 1.0,
                 children: [
+                   PrimaryButtonWithIcon(
+                    text: 'Hose Pipe In Out',
+                    icon: Icons.line_weight,
+                    onPressed: () {
+                      Get.to(() =>  HosePipeEntryScreen());
+                    },
+                  ),
+                  PrimaryButtonWithIcon(
+                    text: 'Hot Plate In Out',
+                    icon: Icons.fireplace,
+                    onPressed: () {
+                      Get.to(() => HotplateEntryScreen());
+                    },
+                  ),
+                  PrimaryButtonWithIcon(
+                    text: 'DRP In Out',
+                    icon: Icons.fireplace,
+                    onPressed: () {
+                      Get.to(() => DrpEntryScreen());
+                    },
+                  ),
                   PrimaryButtonWithIcon(
                     text: 'Add Manager',
                     icon: Icons.person_add,
@@ -124,13 +167,7 @@ class ToolsScreen extends StatelessWidget {
                       // Get.to(() => Screen());
                     },
                   ),
-                  PrimaryButtonWithIcon(
-                    text: 'Hose Pipe In Out',
-                    icon: Icons.line_weight,
-                    onPressed: () {
-                      // Get.to(() => Screen());
-                    },
-                  ),
+                 
                   PrimaryButtonWithIcon(
                     text: 'Terminate Connection',
                     icon: Icons.cancel_outlined,
@@ -147,13 +184,7 @@ class ToolsScreen extends StatelessWidget {
                       // Get.to(() => Screen());
                     },
                   ),
-                  PrimaryButtonWithIcon(
-                    text: 'Hot Plate In Out',
-                    icon: Icons.fireplace,
-                    onPressed: () {
-                      // Get.to(() => Screen());
-                    },
-                  ),
+                  
                 ],
               ),
             ),

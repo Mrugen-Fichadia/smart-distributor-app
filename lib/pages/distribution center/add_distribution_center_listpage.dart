@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/models/distributioncenter_model.dart';
 
@@ -56,18 +57,30 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       // ------- app color palete background -------------//
+      // ------- app color palete background -------------//
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Add New Distribution Center',
-        centerTitle: true,
-        onLeadingPressed: () => Get.back(),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        title: Text(
+          'Add New Distribution Center',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-    // ------------ container color from color palete----------//
+            // ------------ container color from color palete----------//
             color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
@@ -79,17 +92,20 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    CustomTextFormField(
-                      label: 'Distribution Center Name',
-                      hintText: 'Enter Distribution Center Name',
-                      prefixIcon: Icons.location_city_outlined,
+                    TextFormField(
                       controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Distribution Center Name',
+                        hintText: 'Enter Distribution Center Name',
+                        prefixIcon: Icon(Icons.location_city_outlined),
+                      ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Distribution Center Name cannot be empty';
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(color: Colors.black),
                     ),
                     const SizedBox(height: 20),
                     PrimaryButton(

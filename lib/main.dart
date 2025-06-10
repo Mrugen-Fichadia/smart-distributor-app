@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-
 import 'package:smart_distributor_app/dummy_toolsscreen.dart';
 
 void main() {
@@ -15,12 +14,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Smart Distributor App',
-      // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        primaryColor:  Color(0xFF8B0000),
+        // primarySwatch: Color(0xFF8B0000),
         fontFamily: 'Poppins', // A clean, modern font
-        // Define styles for input fields to match the new UI
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(
             color: Colors.black54,

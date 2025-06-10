@@ -1,7 +1,7 @@
 export 'package:flutter/cupertino.dart';
 export 'package:get/get.dart';
 export 'package:smart_distributor_app/common/utils/colors.dart';
-export 'package:smart_distributor_app/common/widgets/custom_appbar.dart';
+// export 'package:smart_distributor_app/common/widgets/custom_appbar.dart';
 export 'package:smart_distributor_app/common/widgets/primary_button.dart';
 export 'package:smart_distributor_app/common/widgets/custom_textformfield.dart';
 export 'package:smart_distributor_app/common/widgets/custom_snackbar.dart';

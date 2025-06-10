@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/models/distributioncenter_model.dart';
 
@@ -50,18 +51,28 @@ class _EditDistributionCenterPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: CustomAppBar(
-        title: 'Edit Distribution Center',
-        centerTitle: true,
-        onLeadingPressed: () {
-          Get.back();
-        },
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Get.back();
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: _deleteDistributionCenter,
           ),
         ],
+        title: Text(
+          'Edit Distribution Center',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -78,23 +89,29 @@ class _EditDistributionCenterPageState
                 key: _formKey,
                 child: Column(
                   children: [
-                    CustomTextFormField(
-                      label: 'Distribution Center Name',
-                      hintText: 'Enter Distribution Center Name',
-                      prefixIcon: Icons.location_city_outlined,
+                    TextFormField(
                       controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Distribution Center Name',
+                        hintText: 'Enter Distribution Center Name',
+                        prefixIcon: Icon(Icons.location_city_outlined),
+                      ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Distribution Center Name cannot be empty';
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(color: Colors.black),
                     ),
                     const SizedBox(height: 20),
                     PrimaryButton(
                       text: "Update Distribution Center",
                       onPressed: _updateDistributionCenter,
                       backgroundColor: const Color(0xFFDC2626),
+                      textColor: Colors.white,
+                      borderRadius: 12.0,
+                      height: 46.0,
                     ),
                   ],
                 ),
