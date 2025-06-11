@@ -16,7 +16,7 @@ class PrimaryButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
 // --------------- app color palete ---------------//
-    this.backgroundColor =const  Color(0xFFDC2626),
+    this.backgroundColor =const  Color(0xFF8B0000),
     this.disabledColor = const Color(0xFFDC2626), 
     this.textColor = Colors.white,
     this.borderRadius = 18.0,

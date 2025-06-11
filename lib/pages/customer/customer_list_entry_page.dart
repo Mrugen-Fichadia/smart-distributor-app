@@ -1,38 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
-import 'package:smart_distributor_app/pages/hawker/hawker_model.dart';
+import 'package:smart_distributor_app/pages/customer/customer_add_page.dart';
+import 'package:smart_distributor_app/pages/customer/customer_edit_page.dart';
 
-class HawkerListPage extends StatefulWidget {
-  const HawkerListPage({super.key});
+class CustomerListPage extends StatefulWidget {
+  const CustomerListPage({super.key});
 
   @override
-  State<HawkerListPage> createState() => _HawkerListPageState();
+  State<CustomerListPage> createState() => _CustomerListPageState();
 }
 
-class _HawkerListPageState extends State<HawkerListPage> {
-  List<Hawker> hawkers = [
-    Hawker(name: 'Ram Bist', phoneNumber: '9841000001', area: 'indore'),
-    Hawker(name: 'Shyam Kumar', phoneNumber: '9841000002', area: 'delhi'),
-    Hawker(name: 'Rahul', phoneNumber: '9841000003', area: 'gudgaon'),
-    Hawker(name: 'Sita', phoneNumber: '9841000004', area: 'bus park'),
-    Hawker(name: 'Gita', phoneNumber: '9841000005', area: 'khatima'),
-    Hawker(name: 'Hari', phoneNumber: '9841000006', area: 'Boud'),
+class _CustomerListPageState extends State<CustomerListPage> {
+  List<Customer> customers = [
+    Customer(
+      id: '1',
+      name: 'al',
+      phoneNumber: '9800000000',
+      address: 'N',
+    ),
+    Customer(
+      id: '2',
+      name: 'Al',
+      phoneNumber: '9876543211',
+      address: 'Ca',
+    ),
+    Customer(
+      id: '3',
+      name: 'Bo',
+      phoneNumber: '9876543212',
+      address: 'Ts',
+    ),
+    Customer(
+      id: '4',
+      name: 'Cl',
+      phoneNumber: '9876543213',
+      address: 'Fl',
+    ),
   ];
 
-  void _fetchHawkers() {
+  void _fetchCustomers() {
     setState(() {});
   }
 
-  void _navigateToAddHawker() async {
-    final result = await Get.to(() => const AddHawkerPage());
-    if (result != null && result is Hawker) {
+  void _navigateToAddCustomer() async {
+    final result = await Get.to(() => const AddCustomerPage());
+    if (result != null && result is Customer) {
       setState(() {
-        hawkers.add(result);
+        customers.add(result);
       });
       CustomSnackBar.show(
         title: 'Success',
-        message: 'Hawker added successfully!',
+        message: 'Customer added successfully!',
         backgroundColor: Colors.green,
         textColor: Colors.white,
         icon: const Icon(Icons.check, color: Colors.white),
@@ -40,41 +59,34 @@ class _HawkerListPageState extends State<HawkerListPage> {
     }
   }
 
-  void _navigateToEditHawker(Hawker hawkerToEdit) async {
-    final originalPhoneNumber = hawkerToEdit.phoneNumber;
-    final originalArea = hawkerToEdit.area;
+  void _navigateToEditCustomer(Customer customerToEdit) async {
+    final originalId = customerToEdit.id;
 
-    final result = await Get.to(() => EditHawkerPage(hawker: hawkerToEdit));
+    final result = await Get.to(
+      () => EditCustomerPage(customer: customerToEdit),
+    );
     if (result != null) {
-      if (result is Hawker) {
+      if (result is Customer) {
         setState(() {
-          int index = hawkers.indexWhere(
-            (hawker) =>
-                hawker.phoneNumber == originalPhoneNumber &&
-                hawker.area == originalArea,
-          );
+          int index = customers.indexWhere((c) => c.id == originalId);
           if (index != -1) {
-            hawkers[index] = result;
+            customers[index] = result;
           }
         });
         CustomSnackBar.show(
           title: 'Success',
-          message: 'Hawker updated successfully!',
+          message: 'Customer updated successfully!',
           backgroundColor: Colors.green,
           textColor: Colors.white,
           icon: const Icon(Icons.check, color: Colors.white),
         );
       } else if (result == 'deleted') {
         setState(() {
-          hawkers.removeWhere(
-            (hawker) =>
-                hawker.phoneNumber == originalPhoneNumber &&
-                hawker.area == originalArea,
-          );
+          customers.removeWhere((c) => c.id == originalId);
         });
         CustomSnackBar.show(
           title: 'Success',
-          message: 'Hawker deleted successfully!',
+          message: 'Customer deleted successfully!',
           backgroundColor: Colors.green,
           textColor: Colors.white,
           icon: const Icon(Icons.check, color: Colors.white),
@@ -84,35 +96,26 @@ class _HawkerListPageState extends State<HawkerListPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      // appBar: CustomAppBar(
-      //   title: 'Hawkers',
-      //   centerTitle: true,
-      //   onLeadingPressed: () {
-      //     Get.back();
-      //   },
-      // ),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: primary,
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back,
+           color: Colors.white),
           onPressed: () {
             Get.back();
           },
         ),
         title: Text(
-          'Hawkers',
+          'Customers',
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -120,14 +123,12 @@ class _HawkerListPageState extends State<HawkerListPage> {
         children: [
           Expanded(
             child: RefreshIndicator(
-              onRefresh: () async {
-                _fetchHawkers();
-              },
+              onRefresh: () async => _fetchCustomers(),
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                itemCount: hawkers.length,
+                itemCount: customers.length,
                 itemBuilder: (context, index) {
-                  final hawker = hawkers[index];
+                  final customer = customers[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     shape: RoundedRectangleBorder(
@@ -137,7 +138,7 @@ class _HawkerListPageState extends State<HawkerListPage> {
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(14),
                       title: Text(
-                        hawker.name,
+                        customer.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -147,17 +148,15 @@ class _HawkerListPageState extends State<HawkerListPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 4),
-                          Text('Phone: ${hawker.phoneNumber}'),
-                          Text('Area: ${hawker.area}'),
+                          Text('Phone: ${customer.phoneNumber}'),
+                          Text('Address: ${customer.address}'),
                         ],
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                        onPressed: () => _navigateToEditHawker(hawker),
+                        onPressed: () => _navigateToEditCustomer(customer),
                       ),
-                      onTap: () {
-                        _navigateToEditHawker(hawker);
-                      },
+                      onTap: () => _navigateToEditCustomer(customer),
                     ),
                   );
                 },
@@ -178,11 +177,11 @@ class _HawkerListPageState extends State<HawkerListPage> {
               ],
             ),
             child: PrimaryButton(
-              text: "Add New Hawker",
-              onPressed: _navigateToAddHawker,
+              text: "Add New Customer",
+              onPressed: _navigateToAddCustomer,
               isFullWidth: true,
               borderRadius: 12.0,
-              backgroundColor: const Color(0xFFDC2626),
+              // backgroundColor: const Color(0xFFDC2626),
             ),
           ),
         ],

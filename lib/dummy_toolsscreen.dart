@@ -4,7 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_distributor_app/pages/distribution%20center/distribution_list_screen.dart';
+import 'package:smart_distributor_app/pages/customer/customer_list_entry_page.dart';
+import 'package:smart_distributor_app/pages/distribution%20center/distribution_list_page.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
@@ -99,14 +100,14 @@ class ToolsScreen extends StatelessWidget {
                     text: 'Add Customer',
                     icon: Icons.person_add,
                     onPressed: () {
-                      // Get.to(() => const AddCustomerScreen());
+                      Get.to(() => const CustomerListPage());
                     },
                   ),
                   PrimaryButtonWithIcon(
-                    text: 'Add Quick Customer',
-                    icon: Icons.person_add,
+                    text: 'Notifications',
+                    icon: Icons.info,
                     onPressed: () {
-                      // Get.to(() => const AddQuickCustomerScreen());
+                      // Get.to(() => const NotificationsPage());
                     },
                   ),
                   PrimaryButtonWithIcon(

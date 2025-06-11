@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
+import 'package:smart_distributor_app/pages/hawker/hawker_model.dart';
 
 class AddHawkerPage extends StatefulWidget {
   const AddHawkerPage({super.key});
@@ -42,7 +43,7 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
       print('Saving New Hawker: ${newHawker.toMap()}');
       Get.back(result: newHawker);
     } else {
-  //-- message to user - all fields needed -------
+      //-- message to user - all fields needed -------
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

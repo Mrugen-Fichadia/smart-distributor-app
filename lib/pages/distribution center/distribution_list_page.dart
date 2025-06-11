@@ -93,9 +93,9 @@ class _DistributionCenterListPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     // ------- app color palete background -------------//
+      // ------- app color palete background -------------//
       backgroundColor: const Color(0xFFF8FAFC),
-     appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -125,7 +125,7 @@ class _DistributionCenterListPageState
                 itemBuilder: (context, index) {
                   final center = distributionCenters[index];
                   return Card(
-      // ------------ container color from color palete----------//
+                    // ------------ container color from color palete----------//
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

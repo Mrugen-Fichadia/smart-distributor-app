@@ -1,59 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
-import 'package:smart_distributor_app/pages/hawker/hawker_model.dart';
 
-class EditHawkerPage extends StatefulWidget {
-  final Hawker hawker;
-
-  const EditHawkerPage({super.key, required this.hawker});
+class AddCustomerPage extends StatefulWidget {
+  const AddCustomerPage({super.key});
 
   @override
-  State<EditHawkerPage> createState() => _EditHawkerPageState();
+  State<AddCustomerPage> createState() => _AddCustomerPageState();
 }
 
-class _EditHawkerPageState extends State<EditHawkerPage> {
+class _AddCustomerPageState extends State<AddCustomerPage> {
   final _formKey = GlobalKey<FormState>();
+
+  final Color primary = Color(0xFF8B0000);
+  // final Color offwhite = Colors.white;
+
+
+  late TextEditingController idController;
   late TextEditingController nameController;
   late TextEditingController phoneNumberController;
-  late TextEditingController areaController;
+  late TextEditingController addressController;
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.hawker.name);
-    phoneNumberController = TextEditingController(
-      text: widget.hawker.phoneNumber,
-    );
-    areaController = TextEditingController(text: widget.hawker.area);
+    idController = TextEditingController();
+    nameController = TextEditingController();
+    phoneNumberController = TextEditingController();
+    addressController = TextEditingController();
   }
 
   @override
   void dispose() {
+    idController.dispose();
     nameController.dispose();
     phoneNumberController.dispose();
-    areaController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
-  void _updateHawker() {
+  void _saveCustomer() {
     if (_formKey.currentState!.validate()) {
-      final updatedHawker = Hawker(
+      final newCustomer = Customer(
+        id: idController.text,
         name: nameController.text,
         phoneNumber: phoneNumberController.text,
-        area: areaController.text,
+        address: addressController.text,
       );
 
-      print('Updating Hawker: ${updatedHawker.toMap()}');
-      Get.back(result: updatedHawker);
-    }
-  }
-
-  void _deleteHawkerInfo() {
-    bool deleteSuccess = true;
-
-    if (deleteSuccess) {
-      Get.back(result: 'deleted');
+      print('Saving New Customer: ${newCustomer.toMap()}');
+      Get.back(result: newCustomer);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please fill all fields properly',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -62,25 +68,20 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: primary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Get.back();
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.white),
-            onPressed: _deleteHawkerInfo,
-          ),
-        ],
         title: Text(
-          'Edit Hawker',
+          'Add New Customer',
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -100,14 +101,29 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: idController,
+                      decoration: const InputDecoration(
+                        labelText: 'Customer ID',
+                        prefixIcon: Icon(Icons.badge_outlined),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Customer ID is required';
+                        }
+                        return null;
+                      },
+                      style: GoogleFonts.poppins(color: Colors.black),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
                       controller: nameController,
                       decoration: const InputDecoration(
                         labelText: 'Name',
-                        prefixIcon: Icon(Icons.person_outline),
+                        prefixIcon: Icon(Icons.person),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Name cannot be empty';
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a name';
                         }
                         return null;
                       },
@@ -118,15 +134,14 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                       controller: phoneNumberController,
                       decoration: const InputDecoration(
                         labelText: 'Phone Number',
-                        hintText: 'Enter Phone Number',
                         prefixIcon: Icon(Icons.phone_outlined),
                       ),
                       keyboardType: TextInputType.phone,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Phone number cannot be empty';
                         }
-                        if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                        if (!RegExp(r'^\d{10}$').hasMatch(value.trim())) {
                           return 'Phone number must be exactly 10 digits';
                         }
                         return null;
@@ -135,15 +150,14 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: areaController,
+                      controller: addressController,
                       decoration: const InputDecoration(
-                        labelText: 'Area',
-                        hintText: 'Enter Area',
+                        labelText: 'Address',
                         prefixIcon: Icon(Icons.location_on_outlined),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Area cannot be empty';
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Address cannot be empty';
                         }
                         return null;
                       },
@@ -151,9 +165,9 @@ class _EditHawkerPageState extends State<EditHawkerPage> {
                     ),
                     const SizedBox(height: 20),
                     PrimaryButton(
-                      text: "Update Hawker",
-                      onPressed: _updateHawker,
-                      backgroundColor: const Color(0xFFDC2626),
+                      text: "Add Customer",
+                      onPressed: _saveCustomer,
+                      // backgroundColor: Color(0xFF8B0000),
                       textColor: Colors.white,
                       borderRadius: 12.0,
                       height: 46.0,
