@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -174,7 +177,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: GestureDetector(
           onTap: () {
-            
+            Get.to(() => const ProfilePage());
           },
           child: Container(
             margin: EdgeInsets.all(12),
@@ -182,10 +185,24 @@ class _DashboardState extends State<Dashboard> {
               shape: BoxShape.circle,
               border: Border.all(width: 2),
             ),
-            child: Icon(Icons.person, size: 24,),
+            child: Icon(Icons.person, size: 24),
           ),
         ),
-        title: Text("Dashboard", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text(
+          "Dashboard",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Get.to(() => const ProfilePage());
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Icon(Icons.notifications, color: primary, size: 28),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(

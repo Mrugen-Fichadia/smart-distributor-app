@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
 import 'package:smart_distributor_app/pages/add_load.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
 import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
+import 'package:smart_distributor_app/pages/managers_list.dart';
+import 'package:smart_distributor_app/pages/payment_status.dart';
 import 'package:smart_distributor_app/pages/quick_customer.dart';
 import 'package:smart_distributor_app/pages/tv-in-out.dart';
 import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
 import 'package:smart_distributor_app/pages/distribution_center/distribution_list_screen.dart';
+import 'package:smart_distributor_app/pages/workers.dart';
 
 class Tools extends StatefulWidget {
   const Tools({super.key});
@@ -34,12 +39,14 @@ class _ToolsState extends State<Tools> {
     {
       "title": "Add Worker",
       "icon": null,
+      "page": WorkerPage()
     },
     {
       "title": "Add Manager",
       "icon": null,
+      "page": ManagerPage()
     },
-    {"title": "Payment Status", "icon": Icons.payment},
+    {"title": "Payment Status", "icon": Icons.payment, "page": PaymentStatus()},
     {"title": "Customer Delivery", "icon": Icons.payment},
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
     {"title": "HosePipe In/Out", "icon": null, "page": HosePipeEntryScreen()},
@@ -54,7 +61,9 @@ class _ToolsState extends State<Tools> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Get.to(() => const ProfilePage());
+          },
           child: Container(
             margin: EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -65,6 +74,17 @@ class _ToolsState extends State<Tools> {
           ),
         ),
         title: Text("Tools", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Get.to(() => const ProfilePage());
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Icon(Icons.notifications, color: primary, size: 28),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
