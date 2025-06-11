@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/add_load.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
+import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
+import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
+import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
 import 'package:smart_distributor_app/pages/quick_customer.dart';
 import 'package:smart_distributor_app/pages/tv-in-out.dart';
 import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
@@ -39,9 +42,9 @@ class _ToolsState extends State<Tools> {
     {"title": "Payment Status", "icon": Icons.payment},
     {"title": "Customer Delivery", "icon": Icons.payment},
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
-    {"title": "HosePipe Delivery", "icon": null},
-    {"title": "DRP Delivery", "icon": null},
-    {"title": "HotPlate Delivery", "icon": null},
+    {"title": "HosePipe In/Out", "icon": null, "page": HosePipeEntryScreen()},
+    {"title": "DRP In/Out", "icon": null, "page": DrpEntryScreen()},
+    {"title": "HotPlate In/Out", "icon": null, "page": HotplateEntryScreen()},
     {"title": "Dispatch/ Return Log", "icon": Icons.local_shipping},
   ];
 
@@ -121,13 +124,13 @@ class ToolCard extends StatelessWidget {
                         color: primary,
                         height: 35,
                       )
-                    : title == "HosePipe Delivery"
+                    : title == "HosePipe In/Out"
                     ? Image.asset(
                         "assets/images/plumbing.png",
                         color: primary,
                         height: 35,
                       )
-                    : title == "DRP Delivery"
+                    : title == "DRP In/Out"
                     ? Image.asset(
                         "assets/images/regulator.png",
                         color: primary,
