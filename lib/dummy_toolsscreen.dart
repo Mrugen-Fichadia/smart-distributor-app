@@ -10,6 +10,7 @@ import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
 import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
+import 'package:smart_distributor_app/pages/notifications/notifications_screen.dart';
 
 
 //------ dummy page for  navigation ease -----
@@ -107,7 +108,7 @@ class ToolsScreen extends StatelessWidget {
                     text: 'Notifications',
                     icon: Icons.info,
                     onPressed: () {
-                      // Get.to(() => const NotificationsPage());
+                      Get.to(() => const NotificationsPage());
                     },
                   ),
                   PrimaryButtonWithIcon(
