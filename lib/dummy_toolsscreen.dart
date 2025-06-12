@@ -11,6 +11,7 @@ import 'package:smart_distributor_app/pages/hawker/hawker_list_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
 import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
 import 'package:smart_distributor_app/pages/notifications/notifications_screen.dart';
+import 'package:smart_distributor_app/pages/order%20page/add_order_page.dart';
 
 
 //------ dummy page for  navigation ease -----
@@ -62,6 +63,13 @@ class ToolsScreen extends StatelessWidget {
                 mainAxisSpacing: 5.0,
                 childAspectRatio: 1.0,
                 children: [
+                   PrimaryButtonWithIcon(
+                    text: 'Add Order',
+                    icon: Icons.add_box_outlined,
+                    onPressed: () {
+                      Get.to(() => AddOrderPage());
+                    },
+                  ),
                    PrimaryButtonWithIcon(
                     text: 'Hose Pipe In Out',
                     icon: Icons.line_weight,
