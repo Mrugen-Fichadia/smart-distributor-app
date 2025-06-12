@@ -4,6 +4,8 @@ import 'package:smart_distributor_app/pages/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:smart_distributor_app/pages/home.dart';
+import 'package:smart_distributor_app/pages/dispatch/return-logs.dart';
+import 'package:smart_distributor_app/pages/customer-delivery.dart';
 import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 
