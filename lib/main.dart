@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/pages/auth.dart';
 import 'dart:async';
 
+import 'package:smart_distributor_app/pages/daily_report_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Initialize Firebase
@@ -66,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const AuthScreen()),
+        MaterialPageRoute(builder: (context) => const DailyReportScreen()),
       );
     });
   }
