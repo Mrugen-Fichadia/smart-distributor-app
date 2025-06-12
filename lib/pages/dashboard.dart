@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
+import 'package:smart_distributor_app/pages/notifications/notifications_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -19,6 +20,8 @@ class _DashboardState extends State<Dashboard> {
       'paymentStatus': 'Confirmed',
       'out_19': 2,
       'in_19': 2,
+      'out_5': 1,
+      'in_5': 1,
       'amount': 1200,
       'location': "Railways",
       'hawker': "Ramji",
@@ -30,6 +33,8 @@ class _DashboardState extends State<Dashboard> {
       'paymentStatus': 'Unconfirmed',
       'out_14': 3,
       'in_14': 3,
+      'out_19': 1,
+      'in_19': 1,
       'amount': 1800,
       'location': "Ratlam",
       'hawker': "Premraj",
@@ -74,7 +79,7 @@ class _DashboardState extends State<Dashboard> {
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -94,19 +99,21 @@ class _DashboardState extends State<Dashboard> {
                   children: [Text("${entry['time']}")],
                 ),
                 SizedBox(height: 4),
-                Text("OUT:"),
-                entry.containsKey('out_14')
-                    ? Text("14 KG - ${entry['out_14']}")
-                    : entry.containsKey('out_19')
-                    ? Text("19 KG - ${entry['out_19']}")
-                    : Text("5 KG - ${entry['out_5']}"),
+                Text("OUT:", style: TextStyle(fontWeight: FontWeight.bold),),
+                if (entry.containsKey('out_14'))
+                  Text("14 Kg - ${entry['out_14']}"),
+                if (entry.containsKey('out_19'))
+                  Text("19 Kg - ${entry['out_19']}"),
+                if (entry.containsKey('out_5'))
+                  Text("5 Kg - ${entry['out_5']}"),
                 SizedBox(height: 4),
-                Text("IN:"),
-                entry.containsKey('in_14')
-                    ? Text("14 KG - ${entry['in_14']}")
-                    : entry.containsKey('in_19')
-                    ? Text("19 KG - ${entry['in_19']}")
-                    : Text("5 KG - ${entry['in_5']}"),
+                Text("IN:", style: TextStyle(fontWeight: FontWeight.bold)),
+                if (entry.containsKey('in_14'))
+                  Text("14 Kg - ${entry['in_14']}"),
+                if (entry.containsKey('in_19'))
+                  Text("19 Kg - ${entry['in_19']}"),
+                if (entry.containsKey('in_5'))
+                  Text("5 Kg - ${entry['in_5']}"),
                 SizedBox(height: 4),
                 Text(
                   "${entry['location']}",
@@ -195,7 +202,7 @@ class _DashboardState extends State<Dashboard> {
         actions: [
           GestureDetector(
             onTap: () {
-              Get.to(() => const ProfilePage());
+              Get.to(() => const NotificationsPage());
             },
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -727,6 +734,7 @@ class _DashboardState extends State<Dashboard> {
                 SizedBox(height: 5),
                 SizedBox(
                   height: 400,
+                  width: double.infinity,
                   child: ListView.builder(
                     itemCount: deliveryHistory.length,
                     itemBuilder: (context, index) {

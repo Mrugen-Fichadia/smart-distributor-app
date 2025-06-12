@@ -18,9 +18,6 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
   final _rate19kgController = TextEditingController();
   final _rate5kgController = TextEditingController();
 
-  static const Color cardBackgroundColor = Color(0xFFF5F5F5);
-  static const Color accentColor = Color(0xFFFFB300);
-
   bool _isLoading = false;
 
   @override
@@ -80,7 +77,7 @@ class _CylinderRatePageState extends State<CylinderRatePage> {
     return InputDecoration(
       labelText: labelText,
       prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.7)), // Subtle icon color
-      hintText: 'e.g., 999.00', // Added hint text
+      hintText: 'e.g., 999', // Added hint text
     );
   }
 
