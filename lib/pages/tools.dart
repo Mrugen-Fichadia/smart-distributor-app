@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
 import 'package:smart_distributor_app/pages/add_load.dart';
+import 'package:smart_distributor_app/pages/customer/customer_list_entry_page.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
@@ -24,7 +25,11 @@ class Tools extends StatefulWidget {
 
 class _ToolsState extends State<Tools> {
   final List<Map<String, dynamic>> tools = [
-    {"title": "Add Customer", "icon": Icons.person_add},
+    {
+      "title": "Add Customer",
+      "icon": Icons.person_add,
+      "page": CustomerListPage(),
+    },
     {"title": "Edit Rates", "icon": null, "page": CylinderRatePage()},
     {"title": "Add Stock", "icon": null, "page": AddLoadScreen()},
     {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
@@ -35,17 +40,13 @@ class _ToolsState extends State<Tools> {
       "icon": Icons.delivery_dining,
       "page": HawkerListPage(),
     },
-    {"title": "Distribution Center", "icon": Icons.location_city, "page": DistributionCenterListPage()},
     {
-      "title": "Add Worker",
-      "icon": null,
-      "page": WorkerPage()
+      "title": "Distribution Center",
+      "icon": Icons.location_city,
+      "page": DistributionCenterListPage(),
     },
-    {
-      "title": "Add Manager",
-      "icon": null,
-      "page": ManagerPage()
-    },
+    {"title": "Add Worker", "icon": null, "page": WorkerPage()},
+    {"title": "Add Manager", "icon": null, "page": ManagerPage()},
     {"title": "Payment Status", "icon": Icons.payment, "page": PaymentStatus()},
     {"title": "Customer Delivery", "icon": Icons.payment},
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
@@ -73,7 +74,10 @@ class _ToolsState extends State<Tools> {
             child: Icon(Icons.person, size: 24),
           ),
         ),
-        title: Text("Tools", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        title: Text(
+          "Tools",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
         actions: [
           GestureDetector(
             onTap: () {
@@ -175,15 +179,9 @@ class ToolCard extends StatelessWidget {
                         height: 35,
                       )
                     : title == "Add Manager"
-                    ? Image.asset(
-                        "assets/images/manager.png",
-                        height: 35,
-                      )
+                    ? Image.asset("assets/images/manager.png", height: 35)
                     : title == "Add Worker"
-                    ? Image.asset(
-                        "assets/images/worker.png",
-                        height: 35,
-                      )
+                    ? Image.asset("assets/images/worker.png", height: 35)
                     : Image.asset(
                         "assets/images/gas-stove.png",
                         color: primary,
