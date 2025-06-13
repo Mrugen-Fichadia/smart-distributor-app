@@ -9,6 +9,7 @@ import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
 import 'package:smart_distributor_app/pages/daily_report.dart';
 import 'package:smart_distributor_app/pages/dispatch_logs.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
+import 'package:smart_distributor_app/pages/hawker_delivery/hawker_delivery_list.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
 import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
 import 'package:smart_distributor_app/pages/managers_list.dart';
@@ -41,7 +42,7 @@ class _ToolsState extends State<Tools> {
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},
     {
       "title": "Add Hawker",
-      "icon": Icons.delivery_dining,
+      "icon": Icons.hail,
       "page": HawkerListPage(),
     },
     {
@@ -53,6 +54,11 @@ class _ToolsState extends State<Tools> {
     {"title": "Add Manager", "icon": null, "page": ManagerPage()},
     {"title": "Payment Status", "icon": Icons.payment, "page": PaymentStatus()},
     {"title": "Customer Delivery", "icon": Icons.payment, "page": CustomerDelivery()},
+    {
+      "title": "Hawker Delivery",
+      "icon": Icons.delivery_dining,
+      "page": HawkerDeliveryList(),
+    },
     {"title": "TV In/Out", "icon": null, "page": TvInOutPage()},
     {"title": "HosePipe In/Out", "icon": null, "page": HosePipeEntryScreen()},
     {"title": "DRP In/Out", "icon": null, "page": DrpEntryScreen()},

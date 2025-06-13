@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
-import 'package:smart_distributor_app/pages/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_distributor_app/pages/home.dart';
 import 'package:smart_distributor_app/pages/tools.dart';
