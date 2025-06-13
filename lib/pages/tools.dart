@@ -6,6 +6,7 @@ import 'package:smart_distributor_app/pages/add_load.dart';
 import 'package:smart_distributor_app/pages/customer/customer_list_entry_page.dart';
 import 'package:smart_distributor_app/pages/customer_delivery.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
+import 'package:smart_distributor_app/pages/daily_report.dart';
 import 'package:smart_distributor_app/pages/dispatch_logs.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
@@ -36,7 +37,7 @@ class _ToolsState extends State<Tools> {
     {"title": "Edit Rates", "icon": null, "page": CylinderRatePage()},
     {"title": "Add Stock", "icon": null, "page": AddLoadScreen()},
     {"title": "Quick Customer", "icon": null, "page": QuickCustomerForm()},
-    {"title": "Daily Report", "icon": Icons.today},
+    {"title": "Daily Report", "icon": Icons.today, "page": DailyReportScreen()},
     {"title": "Custom Report", "icon": Icons.insert_chart_outlined},
     {
       "title": "Add Hawker",

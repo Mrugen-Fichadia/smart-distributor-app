@@ -42,6 +42,9 @@ dependencies:
   intl: ^0.18.1
   shared_preferences: ^2.0.0
   fl_chart: ^0.66.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  animations: ^2.0.11
 
 dev_dependencies:
   flutter_test:

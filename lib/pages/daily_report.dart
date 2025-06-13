@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/report_card_extended.dart';
 import '../widgets/full_chart_view.dart';
-import '../services/pdf_service.dart';
-import '../utils/color_palette.dart';
+import '../services/pdf_services.dart';
+
 
 class DailyReportScreen extends StatefulWidget {
   const DailyReportScreen({super.key});
@@ -82,19 +83,18 @@ class _DailyReportScreenState extends State<DailyReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Palette.ashBackground,
       appBar: AppBar(
-        backgroundColor: Palette.maroon,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           "Daily Report",
-          style: GoogleFonts.poppins(color: Colors.white),
+          style: GoogleFonts.poppins(color: Colors.black),
         ),
         actions: [
           IconButton(
             onPressed: _toggleView,
             icon: Icon(
               showList ? Icons.bar_chart : Icons.list,
-              color: Colors.white,
+              color: primary,
             ),
             tooltip: showList ? "Chart View" : "List View",
           ),
@@ -105,7 +105,7 @@ class _DailyReportScreenState extends State<DailyReportScreen> {
         child: showList ? const ListReportView() : const FullChartView(),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Palette.maroon,
+        backgroundColor: primary,
         onPressed: _generatePDF,
         label: const Text(
           "Generate PDF",
