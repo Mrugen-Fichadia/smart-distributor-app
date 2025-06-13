@@ -23,11 +23,9 @@ class _HosePipeEntryScreenState extends State<HosePipeEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        backgroundColor: primary,
-        
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -35,9 +33,9 @@ class _HosePipeEntryScreenState extends State<HosePipeEntryScreen> {
         title: Text(
           'HosePipe Entry',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: offwhite,
+            color: Colors.black,
           ),
         ),
       ),
@@ -58,7 +56,7 @@ class _HosePipeEntryScreenState extends State<HosePipeEntryScreen> {
                     Text(
                       'HosePipe In/Out',
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -166,7 +164,7 @@ class _HosePipeEntryScreenState extends State<HosePipeEntryScreen> {
                             Text(
                               '${controller.currentStock.value} units',
                               style: GoogleFonts.poppins(
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
                               ),
@@ -184,7 +182,7 @@ class _HosePipeEntryScreenState extends State<HosePipeEntryScreen> {
                             Text(
                               '${controller.defectiveParts.value} units',
                               style: GoogleFonts.poppins(
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
                               ),

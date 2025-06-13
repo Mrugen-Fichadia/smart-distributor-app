@@ -25,7 +25,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'Tv In/Out',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         elevation: 0,
         leading: IconButton(
@@ -54,7 +54,7 @@ class _TvInOutPageState extends State<TvInOutPage> {
                     'Tv In/Out',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       color: Colors.black,
                     ),
                   ),

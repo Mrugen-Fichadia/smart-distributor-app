@@ -113,8 +113,6 @@ class _AuthScreenState extends State<AuthScreen> {
             .map<String>((v) => v['name']!.text)
             .toList();
 
-        await prefs.setString('role', _selectedRole.toString());
-
         await FirebaseFirestore.instance
             .collection('users')
             .doc(authResult.user!.uid)
@@ -133,11 +131,12 @@ class _AuthScreenState extends State<AuthScreen> {
             });
 
         prefs.setString('role', 'distributor');
+        prefs.setString('name', _fullNameController.text.trim());
 
         // After signing up, navigate to distributor home
         if (mounted) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (ctx) => const Dashboard()),
+            MaterialPageRoute(builder: (ctx) => const MyHomePage()),
           );
         }
       } else {
@@ -163,6 +162,7 @@ class _AuthScreenState extends State<AuthScreen> {
         if (!mounted) return;
 
         prefs.setString('role', userRole);
+        prefs.setString('name', userDoc.data()?['fullName']);
         // Navigate based on role
         switch (userRole) {
           case 'distributor':
@@ -427,41 +427,41 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          const Text(
-            "Select Role",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _RoleSquareCard(
-                label: 'Distributor',
-                imagePath: 'assets/images/boss.png',
-                selected: _selectedRole == UserRole.distributor,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.distributor);
-                },
-              ),
-              _RoleSquareCard(
-                label: 'Manager',
-                imagePath: 'assets/images/manager.png',
-                selected: _selectedRole == UserRole.manager,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.manager);
-                },
-              ),
-              _RoleSquareCard(
-                label: 'Worker',
-                imagePath: 'assets/images/editor.png',
-                selected: _selectedRole == UserRole.worker,
-                onTap: () {
-                  setState(() => _selectedRole = UserRole.worker);
-                },
-              ),
-            ],
-          ),
+          // const SizedBox(height: 24),
+          // const Text(
+          //   "Select Role",
+          //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          // ),
+          // const SizedBox(height: 12),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     _RoleSquareCard(
+          //       label: 'Distributor',
+          //       imagePath: 'assets/images/boss.png',
+          //       selected: _selectedRole == UserRole.distributor,
+          //       onTap: () {
+          //         setState(() => _selectedRole = UserRole.distributor);
+          //       },
+          //     ),
+          //     _RoleSquareCard(
+          //       label: 'Manager',
+          //       imagePath: 'assets/images/manager.png',
+          //       selected: _selectedRole == UserRole.manager,
+          //       onTap: () {
+          //         setState(() => _selectedRole = UserRole.manager);
+          //       },
+          //     ),
+          //     _RoleSquareCard(
+          //       label: 'Worker',
+          //       imagePath: 'assets/images/editor.png',
+          //       selected: _selectedRole == UserRole.worker,
+          //       onTap: () {
+          //         setState(() => _selectedRole = UserRole.worker);
+          //       },
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

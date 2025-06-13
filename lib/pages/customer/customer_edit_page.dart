@@ -66,26 +66,24 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.white),
+            icon: const Icon(Icons.delete, color: primary),
             onPressed: _deleteCustomerInfo,
           ),
         ],
         title: Text(
           'Edit Customer',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -93,7 +91,6 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Card(
-            color: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),

@@ -99,14 +99,12 @@ class _CustomerListPageState extends State<CustomerListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,
-           color: Colors.white),
+           color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -114,9 +112,9 @@ class _CustomerListPageState extends State<CustomerListPage> {
         title: Text(
           'Customers',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

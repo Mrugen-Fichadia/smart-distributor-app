@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math'; // For max() function in hawker deliveries
 import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
+import 'package:smart_distributor_app/pages/notifications/notifications_screen.dart';
 
 class AnalysisController extends GetxController {
   var selectedCylinder = '14kg'.obs;
@@ -366,17 +368,34 @@ class AnalysisPage extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: offwhite,
       appBar: AppBar(
-        title: Text('Analysis', style: GoogleFonts.poppins(color: offwhite)),
-        backgroundColor: primary,
+        title: Text('Analysis', style: GoogleFonts.poppins(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: offwhite),
-          onPressed: () {
-            Get.back();
+        leading: GestureDetector(
+          onTap: () {
+            Get.to(() => const ProfilePage());
           },
+          child: Container(
+            margin: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(width: 2),
+            ),
+            child: Icon(Icons.person, size: 24),
+          ),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Get.to(() => const NotificationsPage());
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Icon(Icons.notifications, color: primary, size: 28),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

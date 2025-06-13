@@ -101,7 +101,7 @@ class NewConnectionPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           'New connection',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

@@ -87,7 +87,7 @@ class _DailyReportScreenState extends State<DailyReportScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
           "Daily Report",
-          style: GoogleFonts.poppins(color: Colors.black),
+          style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
           IconButton(

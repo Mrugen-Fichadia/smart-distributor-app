@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/auth.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -882,7 +883,7 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(width: 8),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.offAll(() => AuthScreen());
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Row(

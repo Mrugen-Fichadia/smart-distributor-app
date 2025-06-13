@@ -70,9 +70,9 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -80,9 +80,9 @@ class _HotplateOutScreenState extends State<HotplateOutScreen> {
         title: Text(
           'Hotplate Out',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

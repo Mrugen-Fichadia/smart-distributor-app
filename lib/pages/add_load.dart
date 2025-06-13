@@ -51,13 +51,12 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
         title: const Text(
           'Add Load',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
@@ -68,7 +67,7 @@ class _AddLoadScreenState extends State<AddLoadScreen> {
               style: TextStyle(
                 color: primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 18,
               ),
             ),
           ),

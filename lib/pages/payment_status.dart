@@ -157,7 +157,6 @@ class PaymentStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: offwhite,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
@@ -166,7 +165,7 @@ class PaymentStatus extends StatelessWidget {
         ),
         title: Text(
           'Payment Status',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
       body: Padding(
@@ -177,7 +176,7 @@ class PaymentStatus extends StatelessWidget {
             Text(
               'Recent Payments',
               style: GoogleFonts.poppins(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -196,7 +195,6 @@ class PaymentStatus extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(

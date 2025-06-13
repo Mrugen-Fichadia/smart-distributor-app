@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/pages/Profile/View/profile.dart';
 import 'package:smart_distributor_app/pages/notifications/notifications_screen.dart';
@@ -12,6 +13,14 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final NameController nameController = Get.put(NameController());
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.setName();
+  }
+
   List<Map<String, dynamic>> deliveryHistory = [
     {
       'name': 'Ramesh Patel',
@@ -99,7 +108,7 @@ class _DashboardState extends State<Dashboard> {
                   children: [Text("${entry['time']}")],
                 ),
                 SizedBox(height: 4),
-                Text("OUT:", style: TextStyle(fontWeight: FontWeight.bold),),
+                Text("OUT:", style: TextStyle(fontWeight: FontWeight.bold)),
                 if (entry.containsKey('out_14'))
                   Text("14 Kg - ${entry['out_14']}"),
                 if (entry.containsKey('out_19'))
@@ -112,8 +121,7 @@ class _DashboardState extends State<Dashboard> {
                   Text("14 Kg - ${entry['in_14']}"),
                 if (entry.containsKey('in_19'))
                   Text("19 Kg - ${entry['in_19']}"),
-                if (entry.containsKey('in_5'))
-                  Text("5 Kg - ${entry['in_5']}"),
+                if (entry.containsKey('in_5')) Text("5 Kg - ${entry['in_5']}"),
                 SizedBox(height: 4),
                 Text(
                   "${entry['location']}",
@@ -173,13 +181,9 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  int _currentIndex = 0;
-
-  final List _pages = ["Dashboard", "Stock", "Add Load", "Delivery", "Profile"];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Obx( () => Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: GestureDetector(
@@ -221,7 +225,7 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 SizedBox(height: 10),
                 Text(
-                  "Welcome, Ankit Gas Agency!",
+                  "Welcome, ${nameController.name}!",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
@@ -747,6 +751,15 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-    );
+    ));
+  }
+}
+
+class NameController extends GetxController {
+  var name = ''.obs;
+
+  Future<void> setName() async {
+    final prefs = await SharedPreferences.getInstance();
+    name.value = prefs.getString('name') ?? '';
   }
 }

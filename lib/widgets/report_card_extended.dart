@@ -32,11 +32,7 @@ class ReportCardExtended extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            colors: [Color(0xFFE8EAF6), Color(0xFFF3F4F6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: primary.withAlpha(15)
         ),
         padding: const EdgeInsets.all(16),
         child: Column(

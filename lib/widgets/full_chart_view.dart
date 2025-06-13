@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/widgets/payment_status_chart.dart';

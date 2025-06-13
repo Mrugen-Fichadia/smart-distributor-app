@@ -56,11 +56,10 @@ class _DrpInScreenState extends State<DrpInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -68,9 +67,9 @@ class _DrpInScreenState extends State<DrpInScreen> {
         title: Text(
           'DRP In',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: offwhite,
+            color: Colors.black,
           ),
         ),
       ),

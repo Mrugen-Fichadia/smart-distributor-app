@@ -22,10 +22,9 @@ class _DrpEntryScreenState extends State<DrpEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -33,9 +32,9 @@ class _DrpEntryScreenState extends State<DrpEntryScreen> {
         title: Text(
           'DRP Entry',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: offwhite,
+            color: Colors.black,
           ),
         ),
       ),
