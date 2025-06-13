@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/imports.dart';
+import 'package:get/get.dart';
 
 class AddHawkerPage extends StatefulWidget {
   const AddHawkerPage({super.key});
@@ -41,10 +42,13 @@ class _AddHawkerPageState extends State<AddHawkerPage> {
       print('Saving New Hawker: ${newHawker.toMap()}');
       Get.back(result: true);
     } else {
-  //-- message to user - all fields needed -------
+      //-- message to user - all fields needed -------
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill all fields properly', style: TextStyle(color: Colors.white),),
+          content: Text(
+            'Please fill all fields properly',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
         ),
       );

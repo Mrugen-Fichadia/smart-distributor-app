@@ -4,6 +4,7 @@ import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/customer/customer_add_page.dart';
 import 'package:smart_distributor_app/pages/customer/customer_edit_page.dart';
 import 'package:smart_distributor_app/pages/customer/customer_modle.dart';
+import 'package:get/get.dart';
 
 class CustomerListPage extends StatefulWidget {
   const CustomerListPage({super.key});
@@ -14,30 +15,10 @@ class CustomerListPage extends StatefulWidget {
 
 class _CustomerListPageState extends State<CustomerListPage> {
   List<Customer> customers = [
-    Customer(
-      id: '1',
-      name: 'al',
-      phoneNumber: '9800000000',
-      address: 'N',
-    ),
-    Customer(
-      id: '2',
-      name: 'Al',
-      phoneNumber: '9876543211',
-      address: 'Ca',
-    ),
-    Customer(
-      id: '3',
-      name: 'Bo',
-      phoneNumber: '9876543212',
-      address: 'Ts',
-    ),
-    Customer(
-      id: '4',
-      name: 'Cl',
-      phoneNumber: '9876543213',
-      address: 'Fl',
-    ),
+    Customer(id: '1', name: 'al', phoneNumber: '9800000000', address: 'N'),
+    Customer(id: '2', name: 'Al', phoneNumber: '9876543211', address: 'Ca'),
+    Customer(id: '3', name: 'Bo', phoneNumber: '9876543212', address: 'Ts'),
+    Customer(id: '4', name: 'Cl', phoneNumber: '9876543213', address: 'Fl'),
   ];
 
   void _fetchCustomers() {
@@ -105,8 +86,7 @@ class _CustomerListPageState extends State<CustomerListPage> {
         backgroundColor: primary,
 
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-           color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Get.back();
           },

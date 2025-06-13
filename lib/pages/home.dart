@@ -4,6 +4,7 @@ import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/analysis.dart';
 import 'package:smart_distributor_app/pages/dashboard.dart';
 import 'package:smart_distributor_app/pages/tools.dart';
+import 'package:get/get.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

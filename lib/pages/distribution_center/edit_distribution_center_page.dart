@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/models/distributioncenter_model.dart'; // Ensure this path is correct
+import 'package:get/get.dart';
 
 class EditDistributionCenterPage extends StatefulWidget {
   final DistributionCenter center;
@@ -34,7 +35,7 @@ class _EditDistributionCenterPageState
       final updatedCenter = DistributionCenter(name: nameController.text);
 
       print('Updating Distribution Center: ${updatedCenter.toMap()}');
-      Get.back(result: 'updated'); 
+      Get.back(result: 'updated');
     }
   }
 

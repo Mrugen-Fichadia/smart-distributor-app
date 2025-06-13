@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:get/get.dart';
 
 class HawkerListPage extends StatefulWidget {
   const HawkerListPage({super.key});

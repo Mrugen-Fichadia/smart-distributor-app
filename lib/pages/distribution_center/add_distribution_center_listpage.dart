@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/models/distributioncenter_model.dart';
+import 'package:get/get.dart';
 
 class AddDistributionCenterPage extends StatefulWidget {
   const AddDistributionCenterPage({super.key});
@@ -105,4 +106,3 @@ class _AddDistributionCenterPageState extends State<AddDistributionCenterPage> {
     );
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/customer/customer_modle.dart';
+import 'package:get/get.dart';
 
 class AddCustomerPage extends StatefulWidget {
   const AddCustomerPage({super.key});
@@ -15,7 +16,6 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
 
   final Color primary = Color(0xFF8B0000);
   // final Color offwhite = Colors.white;
-
 
   late TextEditingController idController;
   late TextEditingController nameController;

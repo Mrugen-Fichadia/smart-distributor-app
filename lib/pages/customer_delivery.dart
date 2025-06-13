@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/customer/customer_modle.dart';
@@ -209,14 +211,12 @@ class _CustomerDeliveryState extends State<CustomerDelivery> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     _addCustomerSelection(),
-                    
+
                     _cylinderQuantitySelection(),
-                    
+
                     _accessoryQuantitySelection(),
-                    
-                    
+
                     const SizedBox(height: 24),
 
                     TextFormField(
@@ -257,19 +257,13 @@ class _CustomerDeliveryState extends State<CustomerDelivery> {
     );
   }
 
-
-
-
   Widget _addCustomerSelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Select Customer:',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<Customer>(
@@ -323,18 +317,13 @@ class _CustomerDeliveryState extends State<CustomerDelivery> {
     );
   }
 
-
-
   Widget _cylinderQuantitySelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Cylinder Quantities:',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/notifications/notification_model.dart';
-
-
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -66,7 +66,6 @@ class _NotificationsPageState extends State<NotificationsPage>
         notification.isRead = true;
       }
     });
-
   }
 
   //------------------- 3 tabs ------------------
@@ -87,7 +86,6 @@ class _NotificationsPageState extends State<NotificationsPage>
     setState(() {
       notification.isRead = true;
     });
-  
   }
 
   @override
@@ -153,8 +151,7 @@ class _NotificationsPageState extends State<NotificationsPage>
       return Center(
         child: Text(
           'Nothing here!',
-          style: GoogleFonts.poppins(
-            fontSize: 18, color: Colors.grey),
+          style: GoogleFonts.poppins(fontSize: 18, color: Colors.grey),
         ),
       );
     }
@@ -169,14 +166,16 @@ class _NotificationsPageState extends State<NotificationsPage>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: notification.isRead ? const Color.fromARGB(255, 255, 232, 230) : const Color.fromARGB(255, 255, 190, 180),
+          color: notification.isRead
+              ? const Color.fromARGB(255, 255, 232, 230)
+              : const Color.fromARGB(255, 255, 190, 180),
           elevation: 4,
           child: ListTile(
             contentPadding: const EdgeInsets.all(14),
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-            // -----------------  leading icon for unread only------------------
+                // -----------------  leading icon for unread only------------------
                 if (!notification.isRead)
                   Container(
                     width: 8,
@@ -188,38 +187,40 @@ class _NotificationsPageState extends State<NotificationsPage>
                   ),
               ],
             ),
+
             // -----------------  title ----------------------
-          
             title: Text(
               notification.message,
               style: TextStyle(
-                fontWeight: notification.isRead? FontWeight.normal: FontWeight.bold,
+                fontWeight: notification.isRead
+                    ? FontWeight.normal
+                    : FontWeight.bold,
                 fontSize: 18,
                 color: Colors.black,
-          
+
                 // color: notification.isRead ? Colors.black : Colors.black54,
               ),
             ),
-          
+
             // -----------------  description  ----------------------
             subtitle: Text(
               notification.description,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
-          
+
                 // color: notification.isRead ? Colors.grey[800] : Colors.grey,
               ),
             ),
-          
+
             // -----------------  time  ----------------------
             trailing: Text(
               notification.timeAgo,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
-                // color: notification.isRead 
-                //   ? Colors.grey[800] 
+                // color: notification.isRead
+                //   ? Colors.grey[800]
                 //   : Colors.grey,
               ),
             ),

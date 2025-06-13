@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/imports.dart';
 import 'package:smart_distributor_app/pages/customer/customer_modle.dart';
+import 'package:get/get.dart';
 
 class EditCustomerPage extends StatefulWidget {
   final Customer customer;
@@ -19,7 +20,6 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
   late TextEditingController phoneNumberController;
   late TextEditingController addressController;
   // final bool _isLoading = false;
-
 
   @override
   void initState() {
