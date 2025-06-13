@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../imports.dart';
-import '../utils/color_palette.dart';
+
 
 class BarChartWidget extends StatelessWidget {
   const BarChartWidget({super.key});
@@ -17,7 +17,7 @@ class BarChartWidget extends StatelessWidget {
           BarChartGroupData(
             x: 0,
             barRods: [
-              BarChartRodData(toY: 20, color: Palette.maroon),
+              BarChartRodData(toY: 20, color: primary),
               BarChartRodData(toY: 20, color: Colors.grey),
             ],
             showingTooltipIndicators: [0],
@@ -25,7 +25,7 @@ class BarChartWidget extends StatelessWidget {
           BarChartGroupData(
             x: 1,
             barRods: [
-              BarChartRodData(toY: 10, color: Palette.maroon),
+              BarChartRodData(toY: 10, color: primary),
               BarChartRodData(toY: 10, color: Colors.grey),
             ],
             showingTooltipIndicators: [0],

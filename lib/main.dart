@@ -1,14 +1,18 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_distributor_app/pages/auth.dart';
 import 'dart:async';
-
-import 'package:smart_distributor_app/pages/daily_report_screen.dart';
+import 'package:smart_distributor_app/pages/auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:smart_distributor_app/pages/home.dart';
+import 'package:get/get.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
-
+  // Initialize Firebase with the options for the current platform
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -17,14 +21,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Smart Distributor App',
-      // The theme is updated to match the design of the AuthScreen
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Poppins', // A clean, modern font
-        // Define styles for input fields to match the new UI
+        colorScheme: ColorScheme.fromSeed(seedColor: primary, primary: primary, secondary: secondary),
+        fontFamily: 'Poppins',
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: const TextStyle(
             color: Colors.black54,
@@ -40,13 +41,12 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+            borderSide: const BorderSide(color: primary, width: 2.0),
           ),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16.0,
             horizontal: 16.0,
-          ),
-        ),
+          ),)
       ),
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
@@ -68,7 +68,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DailyReportScreen()),
+        MaterialPageRoute(
+          builder: (context) => const AuthScreen(),
+        ),
       );
     });
   }
@@ -76,8 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Changed background color to match the new app theme
-      backgroundColor: Colors.blue[600],
+     
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Smart Distributor App',
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.white,
+                color: primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

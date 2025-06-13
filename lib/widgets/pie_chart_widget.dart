@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
-import '../utils/color_palette.dart';
 
 class PieChartWidget extends StatelessWidget {
   const PieChartWidget({super.key});
@@ -16,7 +16,7 @@ class PieChartWidget extends StatelessWidget {
         centerSpaceRadius: 40,
         sections: [
           PieChartSectionData(
-            color: Palette.maroon,
+            color: primary,
             value: 47,
             title: '19KG',
             radius: 60,
@@ -30,7 +30,7 @@ class PieChartWidget extends StatelessWidget {
             titleStyle: const TextStyle(color: Colors.white),
           ),
           PieChartSectionData(
-            color: Palette.ash,
+            color: gray,
             value: 0,
             title: '5KG',
             radius: 50,

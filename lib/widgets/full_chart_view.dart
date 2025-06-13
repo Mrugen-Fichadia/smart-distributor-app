@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:smart_distributor_app/widgets/payment_status_chart.dart';
 import 'package:smart_distributor_app/widgets/product_category_chart.dart';
-import '../utils/color_palette.dart';
 import 'chart_legend.dart';
 import 'godown_capacity_chart.dart';
 import 'in_out_chart.dart';
@@ -54,7 +54,7 @@ class FullChartView extends StatelessWidget {
       style: GoogleFonts.poppins(
         fontSize: 16,
         fontWeight: FontWeight.w600,
-        color: Palette.maroon,
+        color: primary,
       ),
     ),
   );

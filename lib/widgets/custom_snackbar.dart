@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../utils/color_palette.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 class CustomSnackbar {
   static void show(BuildContext context, String message) {
@@ -63,7 +63,7 @@ class _AnimatedSnackbarState extends State<_AnimatedSnackbar>
         child: Material(
           elevation: 10,
           borderRadius: BorderRadius.circular(16),
-          color: Palette.maroon.withOpacity(0.9),
+          color: primary.withOpacity(0.9),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Row(

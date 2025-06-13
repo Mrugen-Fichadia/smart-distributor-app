@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import '../utils/color_palette.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
 
 class ProductCategoryChart extends StatelessWidget {
   const ProductCategoryChart({super.key});
@@ -13,7 +13,7 @@ class ProductCategoryChart extends StatelessWidget {
         barGroups: [
           BarChartGroupData(
             x: 0,
-            barRods: [BarChartRodData(toY: 50, color: Palette.maroon)],
+            barRods: [BarChartRodData(toY: 50, color: primary)],
           ),
           BarChartGroupData(
             x: 1,
@@ -21,7 +21,7 @@ class ProductCategoryChart extends StatelessWidget {
           ),
           BarChartGroupData(
             x: 2,
-            barRods: [BarChartRodData(toY: 5, color: Palette.ash)],
+            barRods: [BarChartRodData(toY: 5, color: secondary)],
           ),
         ],
         titlesData: FlTitlesData(

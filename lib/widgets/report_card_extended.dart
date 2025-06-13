@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../utils/color_palette.dart';
+import 'package:smart_distributor_app/imports.dart';
 
 class ReportCardExtended extends StatelessWidget {
   final String product, qty, rate, amount, inVal, outVal, paidQty;
@@ -47,7 +47,7 @@ class ReportCardExtended extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: Palette.maroon,
+                color: primary,
               ),
             ),
             const SizedBox(height: 8),

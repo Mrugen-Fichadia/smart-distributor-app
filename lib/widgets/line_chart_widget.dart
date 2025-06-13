@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 
 import '../imports.dart';
-import '../utils/color_palette.dart';
 
 class LineChartWidget extends StatelessWidget {
   const LineChartWidget({super.key});
@@ -13,7 +12,7 @@ class LineChartWidget extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             isCurved: true,
-            color: Palette.maroon,
+            color: primary,
             spots: const [
               FlSpot(1, 20),
               FlSpot(2, 10),
