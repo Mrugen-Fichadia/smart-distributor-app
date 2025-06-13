@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_distributor_app/pages/new-connection.dart';
 import 'package:smart_distributor_app/pages/terminate.dart';
-import 'package:smart_distributor_app/common/utils/colors.dart';
 import 'package:get/get.dart';
 
 class TvInOutPage extends StatefulWidget {

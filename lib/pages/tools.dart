@@ -6,6 +6,7 @@ import 'package:smart_distributor_app/pages/add_load.dart';
 import 'package:smart_distributor_app/pages/customer/customer_list_entry_page.dart';
 import 'package:smart_distributor_app/pages/customer_delivery.dart';
 import 'package:smart_distributor_app/pages/cylinder_rate_page.dart';
+import 'package:smart_distributor_app/pages/dispatch_logs.dart';
 import 'package:smart_distributor_app/pages/drp_in_out/drp_entry_page.dart';
 import 'package:smart_distributor_app/pages/hosepipe_in_out/hosepipe_entry_screen.dart';
 import 'package:smart_distributor_app/pages/hotplate_in_out/hotplate_entry_screen.dart';
@@ -55,7 +56,7 @@ class _ToolsState extends State<Tools> {
     {"title": "HosePipe In/Out", "icon": null, "page": HosePipeEntryScreen()},
     {"title": "DRP In/Out", "icon": null, "page": DrpEntryScreen()},
     {"title": "HotPlate In/Out", "icon": null, "page": HotplateEntryScreen()},
-    {"title": "Dispatch/ Return Log", "icon": Icons.local_shipping},
+    {"title": "Dispatch/ Return Log", "icon": Icons.local_shipping, "page": DispatchReturnPage()},
   ];
 
   @override

@@ -7,7 +7,12 @@ import 'package:smart_distributor_app/pages/home.dart';
 import 'package:get/get.dart';
 import 'package:smart_distributor_app/common/utils/colors.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase with the options for the current platform
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -64,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const MyHomePage(),
+          builder: (context) => const AuthScreen(),
         ),
       );
     });

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'sign_up_additional.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_distributor_app/common/utils/colors.dart';
+import 'package:smart_distributor_app/pages/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_distributor_app/pages/home.dart';
+import 'package:smart_distributor_app/pages/tools.dart';
 
 // Enum for the two main views
 enum AuthMode { signIn, signUp }
@@ -19,26 +25,355 @@ class _AuthScreenState extends State<AuthScreen> {
   AuthMode _authMode = AuthMode.signIn;
   final _signInFormKey = GlobalKey<FormState>();
   final _signUpFormKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   // Controllers for text fields
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
-  final _otpController = TextEditingController();
   final _agencyNameController = TextEditingController();
   final _distributorNumberController = TextEditingController();
 
+  String? _selectedCompany;
   UserRole _selectedRole = UserRole.distributor;
+
+  // --- STATE & METHODS FOR DYNAMIC FORMS ---
+
+  final List<Map<String, dynamic>> _managerControllers = [];
+  final List<Map<String, dynamic>> _workerControllers = [];
+  final List<Map<String, dynamic>> _distributionCenterControllers = [];
+  final List<Map<String, dynamic>> _vehicleControllers = [];
+
+  bool _isManagerExpanded = false;
+  bool _isWorkerExpanded = false;
+  bool _isDistributionCenterExpanded = false;
+  bool _isVehicleExpanded = false;
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  // --- Firebase Submit Logic ---
+  Future<void> _submit() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final isValid = _authMode == AuthMode.signIn
+        ? _signInFormKey.currentState!.validate()
+        : _signUpFormKey.currentState!.validate();
+
+    if (!isValid) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential authResult;
+
+      if (_authMode == AuthMode.signUp) {
+        // --- SIGN UP LOGIC (FOR DISTRIBUTORS ONLY) ---
+        authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        final List<Map<String, String>> managers = _managerControllers
+            .where((m) => m['isSaved'] == true)
+            .map<Map<String, String>>(
+              (m) => {
+                'name': m['name']!.text,
+                'email': m['email']!.text,
+                'mobile': m['mobile']!.text,
+              },
+            )
+            .toList();
+
+        final List<Map<String, String>> workers = _workerControllers
+            .where((w) => w['isSaved'] == true)
+            .map<Map<String, String>>(
+              (w) => {
+                'name': w['name']!.text,
+                'email': w['email']!.text,
+                'mobile': w['mobile']!.text,
+              },
+            )
+            .toList();
+
+        final List<String> distributionCenters = _distributionCenterControllers
+            .where((dc) => dc['isSaved'] == true)
+            .map<String>((dc) => dc['name']!.text)
+            .toList();
+
+        final List<String> vehicles = _vehicleControllers
+            .where((v) => v['isSaved'] == true)
+            .map<String>((v) => v['name']!.text)
+            .toList();
+
+        await prefs.setString('role', _selectedRole.toString());
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user!.uid)
+            .set({
+              'fullName': _fullNameController.text.trim(),
+              'email': _emailController.text.trim(),
+              'company': _selectedCompany,
+              'agencyName': _agencyNameController.text.trim(),
+              'distributorNumber': _distributorNumberController.text.trim(),
+              'role': 'distributor',
+              'managers': managers,
+              'workers': workers,
+              'distributionCenters': distributionCenters,
+              'vehicles': vehicles,
+              'createdAt': Timestamp.now(),
+            });
+
+        prefs.setString('role', 'distributor');
+
+        // After signing up, navigate to distributor home
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (ctx) => const Dashboard()),
+          );
+        }
+      } else {
+        // --- SIGN IN LOGIC (FOR ALL ROLES) ---
+        authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // Fetch user role from Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user!.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          _showSnackBar('No user data found. Please contact support.');
+          return;
+        }
+
+        final userRole = userDoc.data()?['role'];
+
+        if (!mounted) return;
+
+        prefs.setString('role', userRole);
+        // Navigate based on role
+        switch (userRole) {
+          case 'distributor':
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (ctx) => const MyHomePage()),
+            );
+            break;
+          case 'manager':
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (ctx) => const MyHomePage()),
+            );
+            break;
+          case 'worker':
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (ctx) => const Tools()),
+            );
+            break;
+          default:
+            _showSnackBar('Unknown role. Cannot log in.');
+            await FirebaseAuth.instance
+                .signOut(); // Sign out user with unknown role
+        }
+      }
+    } on FirebaseAuthException catch (err) {
+      var message = 'An error occurred, please check your credentials!';
+      if (err.message != null) {
+        message = err.message!;
+      }
+      _showSnackBar(message);
+    } catch (err) {
+      print("Error details: $err");
+      _showSnackBar('An unexpected error occurred. Check debug console.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // --- Manager Methods ---
+  void _addManagerField() {
+    setState(() {
+      _managerControllers.add({
+        'name': TextEditingController(),
+        'email': TextEditingController(),
+        'mobile': TextEditingController(),
+        'isSaved': false,
+      });
+    });
+  }
+
+  void _saveManager(int index) {
+    final manager = _managerControllers[index];
+    final name = manager['name']!.text.trim();
+    final email = manager['email']!.text.trim();
+    final mobile = manager['mobile']!.text.trim();
+
+    if (name.isNotEmpty && email.isNotEmpty && mobile.isNotEmpty) {
+      setState(() {
+        manager['isSaved'] = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Manager Saved"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      _showSnackBar("Please fill all manager fields before saving");
+    }
+  }
+
+  void _editManager(int index) {
+    setState(() {
+      _managerControllers[index]['isSaved'] = false;
+    });
+  }
+
+  // --- Worker Methods ---
+  void _addWorkerField() {
+    setState(() {
+      _workerControllers.add({
+        'name': TextEditingController(),
+        'email': TextEditingController(),
+        'mobile': TextEditingController(),
+        'isSaved': false,
+      });
+    });
+  }
+
+  void _saveWorker(int index) {
+    final worker = _workerControllers[index];
+    final name = worker['name']!.text.trim();
+    final email = worker['email']!.text.trim();
+    final mobile = worker['mobile']!.text.trim();
+
+    if (name.isNotEmpty && email.isNotEmpty && mobile.isNotEmpty) {
+      setState(() {
+        worker['isSaved'] = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Worker Saved"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      _showSnackBar("Please fill all worker fields before saving");
+    }
+  }
+
+  void _editWorker(int index) {
+    setState(() {
+      _workerControllers[index]['isSaved'] = false;
+    });
+  }
+
+  // --- Distribution Center Methods ---
+  void _addDistributionCenterField() {
+    setState(() {
+      _distributionCenterControllers.add({
+        'name': TextEditingController(),
+        'isSaved': false,
+      });
+    });
+  }
+
+  void _saveDistributionCenter(int index) {
+    final dc = _distributionCenterControllers[index];
+    final name = dc['name']!.text.trim();
+    if (name.isNotEmpty) {
+      setState(() {
+        dc['isSaved'] = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Distribution Center Saved"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      _showSnackBar("Please enter a name before saving");
+    }
+  }
+
+  void _editDistributionCenter(int index) {
+    setState(() {
+      _distributionCenterControllers[index]['isSaved'] = false;
+    });
+  }
+
+  // --- Vehicle Methods ---
+  void _addVehicleField() {
+    setState(() {
+      _vehicleControllers.add({
+        'name': TextEditingController(),
+        'isSaved': false,
+      });
+    });
+  }
+
+  void _saveVehicle(int index) {
+    final vehicle = _vehicleControllers[index];
+    final name = vehicle['name']!.text.trim();
+    if (name.isNotEmpty) {
+      setState(() {
+        vehicle['isSaved'] = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Vehicle Saved"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      _showSnackBar("Please enter a name before saving");
+    }
+  }
+
+  void _editVehicle(int index) {
+    setState(() {
+      _vehicleControllers[index]['isSaved'] = false;
+    });
+  }
 
   @override
   void dispose() {
-    // Dispose controllers to free up resources
     _emailController.dispose();
     _passwordController.dispose();
     _fullNameController.dispose();
-    _otpController.dispose();
     _agencyNameController.dispose();
     _distributorNumberController.dispose();
+
+    for (var m in _managerControllers) {
+      m['name']?.dispose();
+      m['email']?.dispose();
+      m['mobile']?.dispose();
+    }
+    for (var w in _workerControllers) {
+      w['name']?.dispose();
+      w['email']?.dispose();
+      w['mobile']?.dispose();
+    }
+    for (var d in _distributionCenterControllers) {
+      d['name']?.dispose();
+    }
+    for (var v in _vehicleControllers) {
+      v['name']?.dispose();
+    }
     super.dispose();
   }
 
@@ -71,7 +406,9 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(
+              labelText: 'Password (or Mobile No. for Staff)',
+            ),
             obscureText: true,
             validator: (value) =>
                 value!.length < 6 ? 'Password must be 6+ characters.' : null,
@@ -91,7 +428,7 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             "Select Role",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
@@ -156,33 +493,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 !value!.contains('@') ? 'Please enter a valid email.' : null,
           ),
           const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _otpController,
-                  decoration: const InputDecoration(labelText: 'OTP'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) =>
-                      value!.length < 6 ? 'Enter a valid OTP.' : null,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: TextButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('OTP Sent!')));
-                  },
-                  child: const Text('Send OTP'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
             decoration: const InputDecoration(labelText: 'Password'),
@@ -191,17 +501,386 @@ class _AuthScreenState extends State<AuthScreen> {
                 value!.length < 6 ? 'Password must be 6+ characters.' : null,
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Confirm Password'),
-            obscureText: true,
-            validator: (value) {
-              if (value != _passwordController.text) {
-                return 'Passwords do not match';
-              }
-              return null;
-            },
+          DropdownButtonFormField<String>(
+            isExpanded: true,
+            value: _selectedCompany,
+            decoration: const InputDecoration(labelText: 'Select Company'),
+            items:
+                [
+                      'Indian Oil Corporation Ltd. (Indane)',
+                      'Bharat Petroleum Corporation Ltd.',
+                      'Hindustan Petroleum Corporation Ltd.',
+                      'Reliance Petroleum Ltd.',
+                      'Total Energies SE',
+                      'Shell',
+                    ]
+                    .map(
+                      (company) => DropdownMenuItem(
+                        value: company,
+                        child: Text(company, overflow: TextOverflow.ellipsis),
+                      ),
+                    )
+                    .toList(),
+            onChanged: (value) => setState(() => _selectedCompany = value),
+            validator: (value) =>
+                value == null ? 'Please select a company.' : null,
           ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _agencyNameController,
+            decoration: const InputDecoration(labelText: 'Agency Name'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _distributorNumberController,
+            decoration: const InputDecoration(labelText: 'Distributor Number'),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 24),
+          _buildAdditionalOptionsSection(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAdditionalOptionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Additional Options',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        _buildManagerSection(),
+        _buildWorkerSection(),
+        _buildDistributionCenterSection(),
+        _buildVehicleSection(),
+      ],
+    );
+  }
+
+  Widget _buildManagerSection() {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        title: const Text(
+          'Add Manager',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(
+          _isManagerExpanded ? Icons.remove : Icons.add,
+          color: primary,
+        ),
+        onExpansionChanged: (isExpanded) {
+          setState(() {
+            _isManagerExpanded = isExpanded;
+          });
+        },
+        children: [
+          ..._managerControllers.asMap().entries.map((entry) {
+            final index = entry.key;
+            final manager = entry.value;
+            return _buildPersonForm(
+              person: manager,
+              index: index,
+              onSave: _saveManager,
+              onEdit: _editManager,
+              role: 'Manager',
+            );
+          }),
+          if (_managerControllers.isEmpty ||
+              _managerControllers.last['isSaved'])
+            _buildAddButton(
+              _addManagerField,
+              'Add More Managers',
+              Icons.person_add,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWorkerSection() {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        title: const Text(
+          'Add Worker',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(
+          _isWorkerExpanded ? Icons.remove : Icons.add,
+          color: primary,
+        ),
+        onExpansionChanged: (isExpanded) {
+          setState(() {
+            _isWorkerExpanded = isExpanded;
+          });
+        },
+        children: [
+          ..._workerControllers.asMap().entries.map((entry) {
+            final index = entry.key;
+            final worker = entry.value;
+            return _buildPersonForm(
+              person: worker,
+              index: index,
+              onSave: _saveWorker,
+              onEdit: _editWorker,
+              role: 'Worker',
+            );
+          }),
+          if (_workerControllers.isEmpty || _workerControllers.last['isSaved'])
+            _buildAddButton(
+              _addWorkerField,
+              'Add More Workers',
+              Icons.person_add,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDistributionCenterSection() {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        title: const Text(
+          'Add Distribution Center',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(
+          _isDistributionCenterExpanded ? Icons.remove : Icons.add,
+          color: primary,
+        ),
+        onExpansionChanged: (isExpanded) {
+          setState(() {
+            _isDistributionCenterExpanded = isExpanded;
+          });
+        },
+        children: [
+          ..._distributionCenterControllers.asMap().entries.map((entry) {
+            final index = entry.key;
+            final dc = entry.value;
+            return _buildSingleFieldForm(
+              item: dc,
+              index: index,
+              onSave: _saveDistributionCenter,
+              onEdit: _editDistributionCenter,
+              label: 'Distribution Center Name',
+              role: 'Center',
+            );
+          }),
+          if (_distributionCenterControllers.isEmpty ||
+              _distributionCenterControllers.last['isSaved'])
+            _buildAddButton(
+              _addDistributionCenterField,
+              'Add More Centers',
+              Icons.add_location_alt,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVehicleSection() {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        title: const Text(
+          'Add Vehicle',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(
+          _isVehicleExpanded ? Icons.remove : Icons.add,
+          color: primary,
+        ),
+        onExpansionChanged: (isExpanded) {
+          setState(() {
+            _isVehicleExpanded = isExpanded;
+          });
+        },
+        children: [
+          ..._vehicleControllers.asMap().entries.map((entry) {
+            final index = entry.key;
+            final vehicle = entry.value;
+            return _buildSingleFieldForm(
+              item: vehicle,
+              index: index,
+              onSave: _saveVehicle,
+              onEdit: _editVehicle,
+              label: 'Vehicle Name',
+              role: 'Vehicle',
+            );
+          }),
+          if (_vehicleControllers.isEmpty ||
+              _vehicleControllers.last['isSaved'])
+            _buildAddButton(
+              _addVehicleField,
+              'Add More Vehicles',
+              Icons.directions_car,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonForm({
+    required Map<String, dynamic> person,
+    required int index,
+    required void Function(int) onSave,
+    required void Function(int) onEdit,
+    required String role,
+  }) {
+    final bool isSaved = person['isSaved'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          const Divider(),
+          TextFormField(
+            controller: person['name'],
+            decoration: InputDecoration(labelText: '$role Name'),
+            enabled: !isSaved,
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: person['email'],
+            decoration: InputDecoration(labelText: '$role Email'),
+            keyboardType: TextInputType.emailAddress,
+            enabled: !isSaved,
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: person['mobile'],
+            decoration: InputDecoration(labelText: '$role Mobile'),
+            keyboardType: TextInputType.phone,
+            enabled: !isSaved,
+          ),
+          const SizedBox(height: 12),
+          if (!isSaved)
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                foregroundColor: offwhite,
+              ),
+              onPressed: () => onSave(index),
+              icon: const Icon(Icons.check),
+              label: Text("Save $role"),
+            ),
+          if (isSaved)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "$role Saved!",
+                  style: TextStyle(
+                    color: Colors.green[700],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 30,
+                  child: OutlinedButton.icon(
+                    onPressed: () => onEdit(index),
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text('Edit'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      side: BorderSide(color: primary),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSingleFieldForm({
+    required Map<String, dynamic> item,
+    required int index,
+    required void Function(int) onSave,
+    required void Function(int) onEdit,
+    required String label,
+    required String role,
+  }) {
+    final bool isSaved = item['isSaved'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          const Divider(),
+          TextFormField(
+            controller: item['name'],
+            decoration: InputDecoration(labelText: label),
+            enabled: !isSaved,
+          ),
+          const SizedBox(height: 12),
+          if (!isSaved)
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                foregroundColor: offwhite,
+              ),
+              onPressed: () => onSave(index),
+              icon: const Icon(Icons.check),
+              label: Text("Save $role"),
+            ),
+          if (isSaved)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "$role Saved!",
+                  style: TextStyle(
+                    color: Colors.green[700],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 30,
+                  child: OutlinedButton.icon(
+                    onPressed: () => onEdit(index),
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text('Edit'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      side: BorderSide(color: primary),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddButton(VoidCallback onPressed, String label, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: primary),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     );
   }
@@ -210,24 +889,17 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // The main layout is now a Column.
         child: Column(
           children: [
-            // The Expanded widget makes the scrolling area take up all available space.
             Expanded(
-              // Using a ListView is more robust for complex scrolling forms
-              // and helps prevent overflow errors when the keyboard appears.
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
                   const SizedBox(height: 20),
-                  // Logo at center
                   Center(
                     child: CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage(
-                        'assets/images/app_icon.png', // <-- Replace with your logo asset
-                      ), // <-- Replace with your logo asset
+                      backgroundImage: AssetImage('assets/images/app_icon.png'),
                       backgroundColor: Colors.transparent,
                     ),
                   ),
@@ -263,32 +935,20 @@ class _AuthScreenState extends State<AuthScreen> {
                         ? _buildSignInForm()
                         : _buildSignUpForm(),
                   ),
-                  // Add some padding at the very bottom of the scroll view
                   const SizedBox(height: 20),
                 ],
               ),
             ),
-            // This button is now outside the scroll view and at the bottom
-            // of the main Column, making it "sticky".
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              child: _AuthButton(
-                label: _authMode == AuthMode.signIn ? 'Sign In' : 'Continue',
-                authMode: _authMode,
-                signInFormKey: _signInFormKey,
-                signUpFormKey: _signUpFormKey,
-                onSignUpContinue: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AdditionalSignUpPage(),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _AuthButton(
+                      label: _authMode == AuthMode.signIn
+                          ? 'Sign In'
+                          : 'Sign Up',
+                      onPressed: _submit,
                     ),
-                  );
-                },
-                onSignIn: () {
-                  // Handle sign in logic here (e.g., call API or navigate to home)
-                },
-              ),
             ),
           ],
         ),
@@ -297,7 +957,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 }
 
-// Custom widget for the toggle buttons (Sign In/Up and Roles)
 class _CustomToggle extends StatelessWidget {
   final int selectedIndex;
   final List<String> labels;
@@ -326,12 +985,11 @@ class _CustomToggle extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
+                  color: isSelected ? primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 5,
                             spreadRadius: 1,
@@ -343,10 +1001,11 @@ class _CustomToggle extends StatelessWidget {
                   child: Text(
                     labels[index],
                     style: TextStyle(
+                      fontSize: 16,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,
-                      color: isSelected ? Colors.black : Colors.black54,
+                      color: isSelected ? offwhite : Colors.black54,
                     ),
                   ),
                 ),
@@ -359,41 +1018,21 @@ class _CustomToggle extends StatelessWidget {
   }
 }
 
-// Custom widget for the main authentication button
 class _AuthButton extends StatelessWidget {
   final String label;
-  final AuthMode authMode;
-  final GlobalKey<FormState> signInFormKey;
-  final GlobalKey<FormState> signUpFormKey;
-  final VoidCallback onSignUpContinue;
-  final VoidCallback onSignIn;
+  final VoidCallback onPressed;
 
-  const _AuthButton({
-    required this.label,
-    required this.authMode,
-    required this.signInFormKey,
-    required this.signUpFormKey,
-    required this.onSignUpContinue,
-    required this.onSignIn,
-  });
+  const _AuthButton({required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          if (authMode == AuthMode.signUp &&
-              signUpFormKey.currentState!.validate()) {
-            onSignUpContinue();
-          } else if (authMode == AuthMode.signIn &&
-              signInFormKey.currentState!.validate()) {
-            onSignIn();
-          }
-        },
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[600],
-          foregroundColor: Colors.white,
+          backgroundColor: primary,
+          foregroundColor: offwhite,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
@@ -450,6 +1089,84 @@ class _RoleSquareCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// --- PLACEHOLDER HOME SCREENS ---
+// In a real app, these would be in their own files.
+
+class DistributorHomeScreen extends StatelessWidget {
+  const DistributorHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Distributor Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: const Center(child: Text('Welcome, Distributor!')),
+    );
+  }
+}
+
+class ManagerHomeScreen extends StatelessWidget {
+  const ManagerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Manager Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: const Center(child: Text('Welcome, Manager!')),
+    );
+  }
+}
+
+class WorkerHomeScreen extends StatelessWidget {
+  const WorkerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Worker Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: const Center(child: Text('Welcome, Worker!')),
     );
   }
 }

@@ -40,6 +40,8 @@ dependencies:
   pin_code_fields: ^8.0.1 
   intl_phone_field: ^3.2.0
   intl: ^0.18.1
+  shared_preferences: ^2.0.0
+  fl_chart: ^0.66.0
 
 dev_dependencies:
   flutter_test:

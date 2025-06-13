@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_distributor_app/imports.dart';
+import 'package:smart_distributor_app/pages/analysis.dart';
 import 'package:smart_distributor_app/pages/dashboard.dart';
 import 'package:smart_distributor_app/pages/tools.dart';
 
@@ -53,6 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
       'amount': 1200,
     },
   ];
+
+  final RoleController roleController = Get.put(RoleController());
+
+  @override
+  void initState() {
+    super.initState();
+    roleController.setRole();
+  }
 
   Widget deliveryCard(Map<String, dynamic> entry) {
     return Card(
@@ -130,49 +140,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentIndex = 0;
 
-  final List _pages = ["Dashboard", "Stock", "Add Load", "Delivery", "Profile"];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [Dashboard(), Tools()],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: primary,
-        unselectedItemColor: Colors.grey[600],
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.dashboard),
-            ),
-            label: "Dashboard",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.build),
-            ),
-            label: "Tools",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.bar_chart),
-            ),
-            label: "Analysis",
-          ),
-        ],
+    return Obx(
+      () => Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [Dashboard(), Tools(), AnalysisPage()],
+        ),
+        bottomNavigationBar: roleController.role.value == 'worker'
+            ? null
+            : BottomNavigationBar(
+                currentIndex: _currentIndex,
+                selectedItemColor: primary,
+                unselectedItemColor: Colors.grey[600],
+                type: BottomNavigationBarType.fixed,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.dashboard),
+                    ),
+                    label: "Dashboard",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.build),
+                    ),
+                    label: "Tools",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.bar_chart),
+                    ),
+                    label: "Analysis",
+                  ),
+                ],
+              ),
       ),
     );
+  }
+}
+
+class RoleController extends GetxController {
+  var role = 'worker'.obs;
+
+  Future<void> setRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    role.value = prefs.getString('role') ?? 'worker';
   }
 }
