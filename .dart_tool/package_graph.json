@@ -11,10 +11,12 @@
         "cupertino_icons",
         "firebase_auth",
         "firebase_core",
+        "fl_chart",
         "get",
         "google_fonts",
         "intl_phone_field",
-        "pin_code_fields"
+        "pin_code_fields",
+        "syncfusion_flutter_charts"
       ],
       "devDependencies": [
         "flutter_launcher_icons",
@@ -68,6 +70,24 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "syncfusion_flutter_charts",
+      "version": "24.2.9",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "syncfusion_flutter_core",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "fl_chart",
+      "version": "0.66.2",
+      "dependencies": [
+        "equatable",
+        "flutter"
       ]
     },
     {
@@ -362,6 +382,31 @@
         "meta",
         "sky_engine",
         "vector_math"
+      ]
+    },
+    {
+      "name": "syncfusion_flutter_core",
+      "version": "24.2.9",
+      "dependencies": [
+        "flutter",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "intl",
+      "version": "0.19.0",
+      "dependencies": [
+        "clock",
+        "meta",
+        "path"
+      ]
+    },
+    {
+      "name": "equatable",
+      "version": "2.0.7",
+      "dependencies": [
+        "collection",
+        "meta"
       ]
     },
     {
